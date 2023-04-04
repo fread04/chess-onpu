@@ -1,14 +1,16 @@
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.util.LinkedList;
 
 public class Piece {
-    int x;
-    int y;
-    boolean isWhite;
-    LinkedList<Piece> pieceList;
-    String name;
-    String path;
+    public int x;
+    public int y;
+    private final boolean isWhite;
+    private final LinkedList<Piece> pieceList;
+    private final String name;
+    private final String path;
 
     public Piece(int x, int y, boolean isWhite, LinkedList<Piece> pieceList, String name, String path) {
         this.x = x;
@@ -17,11 +19,10 @@ public class Piece {
         this.pieceList = pieceList;
         this.name = name;
         this.path = path;
+        pieceList.add(this);
     }
 
     public void move(int x, int y) {
-        pieceList.stream().filter(p -> (p.x == this.x && p.y == this.y)).forEachOrdered(Piece::kill);
-
         this.x = x;
         this.y = y;
     }
@@ -34,7 +35,6 @@ public class Piece {
         ImageIcon imageIcon = new ImageIcon(path);
         Image img = imageIcon.getImage();
         Image newImg = img.getScaledInstance(w, h, Image.SCALE_SMOOTH);
-
         return new ImageIcon(newImg);
     }
 
@@ -46,13 +46,18 @@ public class Piece {
         return this.y;
     }
 
+    public String getName() {
+        return name;
+    }
+
     public ImageIcon getImgIcon() {
-        return scaleImg(52, 52);
+        return scaleImg(50, 50);
     }
 
     public boolean isWhite() {
         return this.isWhite;
     }
+
 }
 
 class Pawn extends Piece {
