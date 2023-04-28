@@ -18,29 +18,5 @@ public class chessGame {
 
 
 
-/*
-        final BufferedImage image = ImageIO.read(new File("C:/Users/Professional/IdeaProjects/chess-onpu/img/b_rook_png_128px.png"));
-
-        JPanel pane = new JPanel() {
-            @Override
-            public void paint(Graphics g) {
-                super.paintComponent(g);
-                g.drawImage(image, 0, 0, null);
-            }
-        };
-
-        pane.setBounds(0, 0, 500, 500);
-
-        gameFrame.add(pane);
-        gameFrame.repaint();
-
-        JPanel panel = new JPanel();
-        panel.setBounds(728, 728, 10, 10);
-        panel.setBackground(Color.BLACK);
-
-        gameFrame.add(panel);
-*/
-
-
 //new Color(106, 119, 135)
 //new Color(42, 47, 54)

@@ -1,31 +1,25 @@
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.LinkedList;
 
-
-
 public class Board {
+    private final JFrame frame = new JFrame();
+
+    private final Tile[][] tiles = new Tile[8][8];
+
+    public LinkedList<Piece> pieceList = new LinkedList<>();
 
     Board() {
         initFrame();
         drawBoard();
-        moveableBoard();
         frame.setVisible(true);
+        moveableBoard();
     }
-    public LinkedList<Piece> pieceList = new LinkedList<>();
-    private final JFrame frame = new JFrame();
-    private final JPanel[][] panels = new JPanel[8][8];
 
-    public Piece selectedPiece = null;
-
-//    private final JPanel[][] panels = new JPanel[8][8];
-
-    //setting a frame params
     private void initFrame() {
-        frame.setBounds(700, 200, 900, 900);
+        frame.setBounds(700, 200,  532, 552);
         frame.setTitle("Chess Game");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setResizable(false);
@@ -33,65 +27,17 @@ public class Board {
     }
 
     private void drawBoard() {
-
-        //drawing a chess board
-        for(int i = 0, y = 0; i < panels.length; i++, y += 64) {
-            for(int j = 0, x = 0; j < panels.length; j++, x += 64) {
-
-                panels[i][j] = new JPanel();
-                panels[i][j].setLayout(new BorderLayout());
-
-//                if(j == 0) {
-//                    panels[i][j].setBounds(x, y, 32, 64);
-//                    panels[i][j].setBackground(Color.white);
-//                    if(i == 8) panels[i][j].setBounds(x, y, 32, 32);
-//                    x -= 32;
-//                } else if (i == 8) {
-//                    panels[i][j].setBounds(x, y, 64, 32);
-//                    panels[i][j].setBackground(Color.white);
-//                } else {
-                    panels[i][j].setBounds(x, y, 64, 64);
-                    if((i + j) % 2 == 1) {
-                        panels[i][j].setBackground(new Color(106, 119, 135));
-                    } else {
-                        panels[i][j].setBackground(new Color(42, 47, 54));
-                    }
-//                }
+        for(int i = 0; i < tiles.length; i++) { //y coord
+            for (int j = 0; j < tiles.length; j++) {// x coord
+                tiles[i][j] = new Tile(j, i, false);
             }
         }
 
-        //adding numbers to panels
-//        for(int i = 0, ind = panels.length - 1; i < panels.length; i++, ind--) {
-//            JLabel newLabel = new JLabel();
-//
-//            newLabel.setText(String.valueOf(ind));
-//            newLabel.setForeground(Color.black);
-//            newLabel.setVerticalAlignment(JLabel.CENTER);
-//            newLabel.setHorizontalAlignment(JLabel.CENTER);
-//
-//            panels[i][0].add(newLabel);
-//        }
-
-        //adding characters to panels
-//        char c = 'a';
-//        for(int i = 1; i < panels.length; i++) {
-//            JLabel newLabel = new JLabel();
-//
-//            newLabel.setText(String.valueOf(c));
-//            newLabel.setForeground(Color.black);
-//            newLabel.setVerticalAlignment(JLabel.CENTER);
-//            newLabel.setHorizontalAlignment(JLabel.CENTER);
-//
-//            panels[8][i].add(newLabel);
-//            c++;
-//        }
-
         drawPieces();
 
-        //adding panels to the frame
-        for(int i = 0, y = 0; i < panels.length; i++, y += 64) {
-            for (int j = 0, x = 0; j < panels.length; j++, x += 64) {
-                frame.add(panels[i][j]);
+        for(int i = 0; i < tiles.length; i++) {
+            for (int j = 0; j < tiles.length; j++) {
+                frame.add(tiles[i][j].getPanel());
             }
         }
     }
@@ -116,15 +62,6 @@ public class Board {
         Pawn pawnBlackG = new Pawn(6, 1, false, pieceList, "pawn", "img/b_pawn_png_128px.png");
         Pawn pawnBlackH = new Pawn(7, 1, false, pieceList, "pawn", "img/b_pawn_png_128px.png");
 
-        Rook rookWhiteLeft          = new   Rook(0, 7, true, pieceList, "rook", "img/w_rook_png_128px.png");
-        Knight knightWhiteLeft      = new Knight(1, 7, true, pieceList, "knight", "img/w_knight_png_128px.png");
-        Bishop bishopWhiteLeft      = new Bishop(2, 7, true, pieceList, "bishop", "img/w_bishop_png_128px.png");
-        Queen queenWhite            = new  Queen(3, 7, true, pieceList, "queen", "img/w_queen_png_128px.png");
-        King kingWhite              = new   King(4, 7, true, pieceList, "king", "img/w_king_png_128px.png");
-        Bishop bishopWhiteRight     = new Bishop(5, 7, true, pieceList, "bishop", "img/w_bishop_png_128px.png");
-        Knight knightWhiteRight     = new Knight(6, 7, true, pieceList, "knight", "img/w_knight_png_128px.png");
-        Rook rookWhiteRight         = new   Rook(7, 7, true, pieceList, "rook", "img/w_rook_png_128px.png");
-
         Pawn pawnWhiteA = new Pawn(0, 6, true, pieceList, "pawn", "img/w_pawn_png_128px.png");
         Pawn pawnWhiteB = new Pawn(1, 6, true, pieceList, "pawn", "img/w_pawn_png_128px.png");
         Pawn pawnWhiteC = new Pawn(2, 6, true, pieceList, "pawn", "img/w_pawn_png_128px.png");
@@ -134,72 +71,89 @@ public class Board {
         Pawn pawnWhiteG = new Pawn(6, 6, true, pieceList, "pawn", "img/w_pawn_png_128px.png");
         Pawn pawnWhiteH = new Pawn(7, 6, true, pieceList, "pawn", "img/w_pawn_png_128px.png");
 
+        Rook rookWhiteLeft          = new   Rook(0, 7, true, pieceList, "rook", "img/w_rook_png_128px.png");
+        Knight knightWhiteLeft      = new Knight(1, 7, true, pieceList, "knight", "img/w_knight_png_128px.png");
+        Bishop bishopWhiteLeft      = new Bishop(2, 7, true, pieceList, "bishop", "img/w_bishop_png_128px.png");
+        Queen queenWhite            = new  Queen(3, 7, true, pieceList, "queen", "img/w_queen_png_128px.png");
+        King kingWhite              = new   King(4, 7, true, pieceList, "king", "img/w_king_png_128px.png");
+        Bishop bishopWhiteRight     = new Bishop(5, 7, true, pieceList, "bishop", "img/w_bishop_png_128px.png");
+        Knight knightWhiteRight     = new Knight(6, 7, true, pieceList, "knight", "img/w_knight_png_128px.png");
+        Rook rookWhiteRight         = new   Rook(7, 7, true, pieceList, "rook", "img/w_rook_png_128px.png");
+
+
+        for(int i = 0, index = 0; i < tiles.length; i++) {
+            for(int j = 0; j < tiles.length; j++) {
+                if(pieceList.get(index).getY() == i && pieceList.get(index).getX() == j) {
+                    System.out.println(index);
+                    System.out.println(pieceList.get(index).getName());
+                    tiles[i][j].setPiece(pieceList.get(index));
+                    tiles[i][j].getPanel().add(new JLabel(pieceList.get(index).getImgIcon()));
+                    tiles[i][j].setOccupied(true);
+                    index++;
+                }
+            }
+        }
+//        tiles[0][0].addLabelToPanel(new JLabel(rookBlackLeft.getImgIcon()));
 
         //adding pieces to their respective panels
-        panels[0][0].add(new JLabel(rookBlackRight.getImgIcon()));
-        panels[0][1].add(new JLabel(knightBlackRight.getImgIcon()));
-        panels[0][2].add(new JLabel(bishopBlackRight.getImgIcon()));
-        panels[0][3].add(new JLabel(queenBlack.getImgIcon()));
-        panels[0][4].add(new JLabel(kingBlack.getImgIcon()));
-        panels[0][5].add(new JLabel(bishopBlackLeft.getImgIcon()));
-        panels[0][6].add(new JLabel(knightBlackLeft.getImgIcon()));
-        panels[0][7].add(new JLabel(rookBlackLeft.getImgIcon()));
 
-        panels[1][0].add(new JLabel(pawnBlackA.getImgIcon()));
-        panels[1][1].add(new JLabel(pawnBlackB.getImgIcon()));
-        panels[1][2].add(new JLabel(pawnBlackC.getImgIcon()));
-        panels[1][3].add(new JLabel(pawnBlackD.getImgIcon()));
-        panels[1][4].add(new JLabel(pawnBlackE.getImgIcon()));
-        panels[1][5].add(new JLabel(pawnBlackF.getImgIcon()));
-        panels[1][6].add(new JLabel(pawnBlackG.getImgIcon()));
-        panels[1][7].add(new JLabel(pawnBlackH.getImgIcon()));
-
-
-        panels[7][0].add(new JLabel(rookWhiteRight.getImgIcon()));
-        panels[7][1].add(new JLabel(knightWhiteRight.getImgIcon()));
-        panels[7][2].add(new JLabel(bishopWhiteRight.getImgIcon()));
-        panels[7][3].add(new JLabel(queenWhite.getImgIcon()));
-        panels[7][4].add(new JLabel(kingWhite.getImgIcon()));
-        panels[7][5].add(new JLabel(bishopWhiteLeft.getImgIcon()));
-        panels[7][6].add(new JLabel(knightWhiteLeft.getImgIcon()));
-        panels[7][7].add(new JLabel(rookWhiteLeft.getImgIcon()));
-
-        panels[6][0].add(new JLabel(pawnWhiteA.getImgIcon()));
-        panels[6][1].add(new JLabel(pawnWhiteB.getImgIcon()));
-        panels[6][2].add(new JLabel(pawnWhiteC.getImgIcon()));
-        panels[6][3].add(new JLabel(pawnWhiteD.getImgIcon()));
-        panels[6][4].add(new JLabel(pawnWhiteE.getImgIcon()));
-        panels[6][5].add(new JLabel(pawnWhiteF.getImgIcon()));
-        panels[6][6].add(new JLabel(pawnWhiteG.getImgIcon()));
-        panels[6][7].add(new JLabel(pawnWhiteH.getImgIcon()));
+//        panels[0][0].add(new JLabel(rookBlackRight.getImgIcon()));
+//        panels[0][1].add(new JLabel(knightBlackRight.getImgIcon()));
+//        panels[0][2].add(new JLabel(bishopBlackRight.getImgIcon()));
+//        panels[0][3].add(new JLabel(queenBlack.getImgIcon()));
+//        panels[0][4].add(new JLabel(kingBlack.getImgIcon()));
+//        panels[0][5].add(new JLabel(bishopBlackLeft.getImgIcon()));
+//        panels[0][6].add(new JLabel(knightBlackLeft.getImgIcon()));
+//        panels[0][7].add(new JLabel(rookBlackLeft.getImgIcon()));
+//
+//        panels[1][0].add(new JLabel(pawnBlackA.getImgIcon()));
+//        panels[1][1].add(new JLabel(pawnBlackB.getImgIcon()));
+//        panels[1][2].add(new JLabel(pawnBlackC.getImgIcon()));
+//        panels[1][3].add(new JLabel(pawnBlackD.getImgIcon()));
+//        panels[1][4].add(new JLabel(pawnBlackE.getImgIcon()));
+//        panels[1][5].add(new JLabel(pawnBlackF.getImgIcon()));
+//        panels[1][6].add(new JLabel(pawnBlackG.getImgIcon()));
+//        panels[1][7].add(new JLabel(pawnBlackH.getImgIcon()));
+//
+//
+//        panels[7][0].add(new JLabel(rookWhiteRight.getImgIcon()));
+//        panels[7][1].add(new JLabel(knightWhiteRight.getImgIcon()));
+//        panels[7][2].add(new JLabel(bishopWhiteRight.getImgIcon()));
+//        panels[7][3].add(new JLabel(queenWhite.getImgIcon()));
+//        panels[7][4].add(new JLabel(kingWhite.getImgIcon()));
+//        panels[7][5].add(new JLabel(bishopWhiteLeft.getImgIcon()));
+//        panels[7][6].add(new JLabel(knightWhiteLeft.getImgIcon()));
+//        panels[7][7].add(new JLabel(rookWhiteLeft.getImgIcon()));
+//
+//        panels[6][0].add(new JLabel(pawnWhiteA.getImgIcon()));
+//        panels[6][1].add(new JLabel(pawnWhiteB.getImgIcon()));
+//        panels[6][2].add(new JLabel(pawnWhiteC.getImgIcon()));
+//        panels[6][3].add(new JLabel(pawnWhiteD.getImgIcon()));
+//        panels[6][4].add(new JLabel(pawnWhiteE.getImgIcon()));
+//        panels[6][5].add(new JLabel(pawnWhiteF.getImgIcon()));
+//        panels[6][6].add(new JLabel(pawnWhiteG.getImgIcon()));
+//        panels[6][7].add(new JLabel(pawnWhiteH.getImgIcon()));
 
 
     }
 
     private void moveableBoard() {
+
         frame.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+
+            }
 
             @Override
             public void mousePressed(MouseEvent e) {
-                selectedPiece = getPiece(e.getX() - 8, e.getY() - 31);
-//                System.out.println("piece: " + selectedPiece + ", x = " + e.getX() + " x - 8 = " + (e.getX() - 8) + ", y = " + e.getY() + " y - 31 = " + (e.getY() - 31));
-//                System.out.println(panels[(e.getY() - 31) / 64][(e.getX() - 8) / 64].getComponent(0));
-
-                if(selectedPiece != null) {
-                    JLabel removedLabel = (JLabel) panels[(e.getY() - 31) / 64][(e.getX() - 8) / 64].getComponent(0);
-                    panels[(e.getY() - 31) / 64][(e.getX() - 8) / 64].remove(removedLabel);
-                    panels[(e.getY() - 31) / 64][(e.getX() - 8) / 64].revalidate();
-                }
+                System.out.println(tiles[(e.getY() - 31) / 64][(e.getX() - 8) / 64].isOccupied());
+                System.out.println("y = " + ((e.getY() - 31) / 64) + ", x = " + ((e.getX() - 8) / 64));
             }
 
             @Override
             public void mouseReleased(MouseEvent e) {
-                if(selectedPiece != null) {
-                    selectedPiece.move((e.getX() - 8) / 64, (e.getY() - 31) / 64);
-                    selectedPiece.getImgIcon();
-                    panels[(e.getY() - 31) / 64][(e.getX() - 8) / 64].add(new JLabel(selectedPiece.getImgIcon()));
-                    panels[(e.getY() - 31) / 64][(e.getX() - 8) / 64].revalidate();
-                }
+
             }
 
             @Override
@@ -211,21 +165,12 @@ public class Board {
             public void mouseExited(MouseEvent e) {
 
             }
-
-            @Override
-            public void mouseClicked(MouseEvent e) {
-
-            }
         });
+
         frame.addMouseMotionListener(new MouseMotionListener() {
             @Override
             public void mouseDragged(MouseEvent e) {
-                if(selectedPiece != null) {
-                    selectedPiece.x = e.getX();
-                    selectedPiece.y = e.getY();
-                    System.out.println("selected piece: " + selectedPiece);
-                    frame.repaint();
-                }
+
             }
 
             @Override
@@ -233,27 +178,13 @@ public class Board {
 
             }
         });
-
-    }
-
-    private Piece getPiece(int x, int y) {
-        for (Piece p : pieceList) {
-            if (p.getX() == ((x / 64)) && p.getY() == ((y / 64))) {
-                return p;
-            }
-        }
-        return null;
     }
 
     public JFrame getFrame() {
         return frame;
     }
 
-    public JPanel[][] getPanels() {
-        return panels;
-    }
-
-    public LinkedList<Piece> getPieceList() {
-        return pieceList;
+    public Tile[][] getTiles() {
+        return tiles;
     }
 }

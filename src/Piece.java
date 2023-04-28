@@ -1,7 +1,5 @@
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.util.LinkedList;
 
 public class Piece {
@@ -25,10 +23,6 @@ public class Piece {
     public void move(int x, int y) {
         this.x = x;
         this.y = y;
-    }
-
-    public void kill() {
-        pieceList.remove(this);
     }
 
     private ImageIcon scaleImg(int w, int h) { //scaling img that we are getting
@@ -61,7 +55,6 @@ public class Piece {
 }
 
 class Pawn extends Piece {
-
     public Pawn(int x, int y, boolean isWhite, LinkedList<Piece> pieceList, String name, String path) {
         super(x, y, isWhite, pieceList, name, path);
     }
@@ -101,3 +94,4 @@ class King extends Piece {
         super(x, y, isWhite, pieceList, name, path);
     }
 }
+
