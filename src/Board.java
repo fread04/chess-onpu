@@ -107,12 +107,19 @@ public class Board {
                 try {
                     makeMove(e);
                 } catch (Exception ex) {
+                    selectedPiece = null;
+                    selectedTile = null;
                     throw new RuntimeException(ex);
                 }
             }
 
             @Override
             public void mousePressed(MouseEvent e) {
+//                for(int i = 0; i < tiles.length; i++) {
+//                    for(int j = 0; j < tiles.length; j++) {
+//                        System.out.println("(" + i + ", " + j + ") tile is occupied: " + tiles[i][j].isOccupied());
+//                    }
+//                }
             }
 
             @Override
@@ -161,6 +168,13 @@ public class Board {
                 }
             }
         }
+//        for(int i = 0; i < tiles.length; i++) {
+//            for(int j = 0; j < tiles.length; j++) {
+//                if(tiles[j][i].getCoordinates()[0] == x && tiles[j][j].getCoordinates()[1] == y){
+//                    return tiles[j][i];
+//                }
+//            }
+//        }
         return null;
     }
 
@@ -181,7 +195,7 @@ public class Board {
             System.out.println(Arrays.toString(tiles[(e.getY() - 31) / 64][(e.getX() - 8) / 64].getCoordinates()));
             System.out.println(selectedPiece);
 
-        } else if(!tiles[(e.getY() - 31) / 64][(e.getX() - 8) / 64].isOccupied()) {// if there is a piece then move it according to the rules
+        } else if(!tiles[(e.getY() - 31) / 64][(e.getX() - 8) / 64].isOccupied()) {// if there isn't a piece then move it according to the rules
             if(selectedPiece != null) {
                 Tile newTile = getTile(((e.getX() - 8) / 64), ((e.getY() - 31) / 64));//get tile where to move piece
                 if(Objects.equals(selectedPiece.getName(), "pawn")) {
@@ -228,8 +242,6 @@ public class Board {
                 } else {
                     System.out.println("something got wrong");
                 }
-
-
             }
         }
     }
