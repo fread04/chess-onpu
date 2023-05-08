@@ -2,14 +2,18 @@ import javax.swing.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.Objects;
 
 public class Board {
     private final JFrame frame = new JFrame();
-
     private final Tile[][] tiles = new Tile[8][8];
-
     public LinkedList<Piece> pieceList = new LinkedList<>();
+    private Piece selectedPiece;
+    private Tile selectedTile;
+    private Tile oldTile;
+    private boolean isPieceSelected = false;
 
     Board() {
         initFrame();
@@ -81,60 +85,18 @@ public class Board {
         Rook rookWhiteRight         = new   Rook(7, 7, true, pieceList, "rook", "img/w_rook_png_128px.png");
 
 
-        for(int i = 0, index = 0; i < tiles.length; i++) {
+        for(int i = 0, index = 0; i < tiles.length; i++) {//adding pieces to their tiles
             for(int j = 0; j < tiles.length; j++) {
                 if(pieceList.get(index).getY() == i && pieceList.get(index).getX() == j) {
-                    System.out.println(index);
-                    System.out.println(pieceList.get(index).getName());
+//                    System.out.println(index);
+//                    System.out.println(pieceList.get(index).getName());
                     tiles[i][j].setPiece(pieceList.get(index));
-                    tiles[i][j].getPanel().add(new JLabel(pieceList.get(index).getImgIcon()));
+                    tiles[i][j].addLabelToPanel(new JLabel(pieceList.get(index).getImgIcon()));
                     tiles[i][j].setOccupied(true);
                     index++;
                 }
             }
         }
-//        tiles[0][0].addLabelToPanel(new JLabel(rookBlackLeft.getImgIcon()));
-
-        //adding pieces to their respective panels
-
-//        panels[0][0].add(new JLabel(rookBlackRight.getImgIcon()));
-//        panels[0][1].add(new JLabel(knightBlackRight.getImgIcon()));
-//        panels[0][2].add(new JLabel(bishopBlackRight.getImgIcon()));
-//        panels[0][3].add(new JLabel(queenBlack.getImgIcon()));
-//        panels[0][4].add(new JLabel(kingBlack.getImgIcon()));
-//        panels[0][5].add(new JLabel(bishopBlackLeft.getImgIcon()));
-//        panels[0][6].add(new JLabel(knightBlackLeft.getImgIcon()));
-//        panels[0][7].add(new JLabel(rookBlackLeft.getImgIcon()));
-//
-//        panels[1][0].add(new JLabel(pawnBlackA.getImgIcon()));
-//        panels[1][1].add(new JLabel(pawnBlackB.getImgIcon()));
-//        panels[1][2].add(new JLabel(pawnBlackC.getImgIcon()));
-//        panels[1][3].add(new JLabel(pawnBlackD.getImgIcon()));
-//        panels[1][4].add(new JLabel(pawnBlackE.getImgIcon()));
-//        panels[1][5].add(new JLabel(pawnBlackF.getImgIcon()));
-//        panels[1][6].add(new JLabel(pawnBlackG.getImgIcon()));
-//        panels[1][7].add(new JLabel(pawnBlackH.getImgIcon()));
-//
-//
-//        panels[7][0].add(new JLabel(rookWhiteRight.getImgIcon()));
-//        panels[7][1].add(new JLabel(knightWhiteRight.getImgIcon()));
-//        panels[7][2].add(new JLabel(bishopWhiteRight.getImgIcon()));
-//        panels[7][3].add(new JLabel(queenWhite.getImgIcon()));
-//        panels[7][4].add(new JLabel(kingWhite.getImgIcon()));
-//        panels[7][5].add(new JLabel(bishopWhiteLeft.getImgIcon()));
-//        panels[7][6].add(new JLabel(knightWhiteLeft.getImgIcon()));
-//        panels[7][7].add(new JLabel(rookWhiteLeft.getImgIcon()));
-//
-//        panels[6][0].add(new JLabel(pawnWhiteA.getImgIcon()));
-//        panels[6][1].add(new JLabel(pawnWhiteB.getImgIcon()));
-//        panels[6][2].add(new JLabel(pawnWhiteC.getImgIcon()));
-//        panels[6][3].add(new JLabel(pawnWhiteD.getImgIcon()));
-//        panels[6][4].add(new JLabel(pawnWhiteE.getImgIcon()));
-//        panels[6][5].add(new JLabel(pawnWhiteF.getImgIcon()));
-//        panels[6][6].add(new JLabel(pawnWhiteG.getImgIcon()));
-//        panels[6][7].add(new JLabel(pawnWhiteH.getImgIcon()));
-
-
     }
 
     private void moveableBoard() {
@@ -142,13 +104,15 @@ public class Board {
         frame.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
-
+                try {
+                    makeMove(e);
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }
             }
 
             @Override
             public void mousePressed(MouseEvent e) {
-                System.out.println(tiles[(e.getY() - 31) / 64][(e.getX() - 8) / 64].isOccupied());
-                System.out.println("y = " + ((e.getY() - 31) / 64) + ", x = " + ((e.getX() - 8) / 64));
             }
 
             @Override
@@ -180,6 +144,141 @@ public class Board {
         });
     }
 
+    private Piece getPiece(int x, int y) {
+        for(Piece p : pieceList) {
+            if(p.getX() == x && p.getY() == y) {
+                return p;
+            }
+        }
+        return null;
+    }
+
+    private Tile getTile(int x, int y) {
+        for (Tile[] tile : tiles) {
+            for (int j = 0; j < tiles.length; j++) {
+                if (tile[j].getCoordinates()[0] == x && tile[j].getCoordinates()[1] == y) {
+                    return tile[j];
+                }
+            }
+        }
+        return null;
+    }
+
+    private boolean isPieceSelected(Piece selectedPiece) {
+        if(selectedPiece != null) {
+            return isPieceSelected = true;
+        }
+        return  isPieceSelected = false;
+    }
+
+    private void makeMove(MouseEvent e) throws Exception {
+        if(getTile(((e.getX() - 8) / 64), ((e.getY() - 31) / 64)).isOccupied()) {// take a piece if there is no piece
+            selectedPiece = getPiece(((e.getX() - 8) / 64), ((e.getY() - 31) / 64));
+            oldTile = getTile(((e.getX() - 8) / 64), ((e.getY() - 31) / 64));
+
+            System.out.println("| if |");
+            System.out.println("old tile is occupied: " + oldTile.isOccupied());
+            System.out.println(Arrays.toString(tiles[(e.getY() - 31) / 64][(e.getX() - 8) / 64].getCoordinates()));
+            System.out.println(selectedPiece);
+
+        } else if(!tiles[(e.getY() - 31) / 64][(e.getX() - 8) / 64].isOccupied()) {// if there is a piece then move it according to the rules
+            if(selectedPiece != null) {
+                Tile newTile = getTile(((e.getX() - 8) / 64), ((e.getY() - 31) / 64));//get tile where to move piece
+                if(Objects.equals(selectedPiece.getName(), "pawn")) {
+                    if(selectedPiece.moveValidator(newTile, tiles)) {
+                        performMove(e, newTile);
+                    } else {
+                        throw new IllegalAccessException("move isn't valid");
+                    }
+                }
+                else if(Objects.equals(selectedPiece.getName(), "knight")) {
+                    if(selectedPiece.moveValidator(newTile, tiles)) {
+                        performMove(e, newTile);
+                    } else {
+                        throw new IllegalAccessException("move isn't valid");
+                    }
+                }
+                else if(Objects.equals(selectedPiece.getName(), "bishop")) {
+                    if(selectedPiece.moveValidator(newTile, tiles)) {
+                        performMove(e, newTile);
+                    } else {
+                        throw new IllegalAccessException("move isn't valid");
+                    }
+                }
+                else if(Objects.equals(selectedPiece.getName(), "rook")) {
+                    if(selectedPiece.moveValidator(newTile, tiles)) {
+                        performMove(e, newTile);
+                    } else {
+                        throw new IllegalAccessException("move isn't valid");
+                    }
+                }
+                else if(Objects.equals(selectedPiece.getName(), "king")) {
+                    if(selectedPiece.moveValidator(newTile, tiles)) {
+                        performMove(e, newTile);
+                    } else {
+                        throw new IllegalAccessException("move isn't valid");
+                    }
+                }
+                else if(Objects.equals(selectedPiece.getName(), "queen")) {
+                    if(selectedPiece.moveValidator(newTile, tiles)) {
+                        performMove(e, newTile);
+                    } else {
+                        throw new IllegalAccessException("move isn't valid");
+                    }
+                } else {
+                    System.out.println("something got wrong");
+                }
+
+
+            }
+        }
+    }
+
+    private void performMove(MouseEvent e, Tile tile) {
+        selectedPiece.move(((e.getX() - 8) / 64), ((e.getY() - 31) / 64));
+
+        //setting piece to new tile
+        tile.setPiece(selectedPiece);
+        tile.addLabelToPanel(new JLabel(selectedPiece.getImgIcon()));
+        tile.setOccupied(true);
+
+        //removing from old tile
+        oldTile.removeLabelFromPanel(oldTile.getPanel());
+        oldTile.setPiece(null);
+        oldTile.setOccupied(false);
+
+                        System.out.println("| else |");
+                        System.out.println("new tile coords: " + Arrays.toString(tile.getCoordinates()));
+                        System.out.println("old tile is occupied: " + oldTile.isOccupied());
+                        System.out.println(Arrays.toString(oldTile.getCoordinates()));
+                        System.out.println("new tile is occupied: " + tile.isOccupied());
+
+        //setting variable to null for future work
+        selectedPiece = null;
+        selectedTile = null;
+    }
+
+    private void capture(MouseEvent e, Tile tile) {
+        selectedPiece.move(((e.getX() - 8) / 64), ((e.getY() - 31) / 64));
+        //deleting if there is a piece from new tile
+        tile.removeLabelFromPanel(tile.getPanel());
+        tile.setPiece(null);
+
+        //setting new tile
+        tile.setPiece(selectedPiece);
+        tile.addLabelToPanel(new JLabel(selectedPiece.getImgIcon()));
+        tile.setOccupied(true);
+
+        //removing from old tile
+        oldTile.removeLabelFromPanel(oldTile.getPanel());
+        oldTile.setPiece(null);
+        oldTile.setOccupied(false);
+
+        //setting variable to null for future work
+        selectedPiece = null;
+        selectedTile = null;
+    }
+
     public JFrame getFrame() {
         return frame;
     }
@@ -187,4 +286,6 @@ public class Board {
     public Tile[][] getTiles() {
         return tiles;
     }
+
+
 }

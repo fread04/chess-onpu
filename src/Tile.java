@@ -21,16 +21,24 @@ public class Tile {
         newPanel.setLayout(new BorderLayout());
         newPanel.setBounds(x * 64, y * 64, 64, 64);
         if((x + y) % 2 == 1) {
-            newPanel.setBackground(new Color(106, 119, 135));
-        } else {
             newPanel.setBackground(new Color(42, 47, 54));
+        } else {
+            newPanel.setBackground(new Color(106, 119, 135));
         }
         panel = newPanel;
     }
 
     public void addLabelToPanel(JLabel label) {
         panel.add(label);
-        System.out.println(label);
+//        System.out.println(label);
+    }
+
+    public void removeLabelFromPanel(JPanel panel) {
+        if(panel.getComponent(0) != null) {
+            panel.remove(panel.getComponent(0));
+            panel.revalidate();
+            panel.repaint();
+        }
     }
 
     public int getX() {
@@ -39,6 +47,10 @@ public class Tile {
 
     public int getY() {
         return y;
+    }
+
+    public int[] getCoordinates() {
+        return new int[]{x, y};
     }
 
     public boolean isOccupied() {
