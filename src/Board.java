@@ -187,6 +187,19 @@ public class Board {
 
     private void makeMove(MouseEvent e) throws Exception {
         if(getTile(((e.getX() - 8) / 64), ((e.getY() - 31) / 64)).isOccupied()) {// take a piece if there is no piece
+            if(selectedPiece != null && getTile(((e.getX() - 8) / 64), ((e.getY() - 31) / 64)).getPiece().isWhite() != selectedPiece.isWhite()) {
+                Tile newTile = getTile(((e.getX() - 8) / 64), ((e.getY() - 31) / 64));//get tile where to move piece
+                switch (selectedPiece.getName()) {
+                    case "pawn", "Knight", "bishop", "rook", "king", "queen" -> {
+                        if (selectedPiece.moveValidator(newTile, tiles)) {
+                            capture(e, newTile);
+                        } else {
+                            throw new IllegalAccessException("move isn't valid");
+                        }
+                    }
+                    default -> System.out.println("something got wrong");
+                }
+            }
             selectedPiece = getPiece(((e.getX() - 8) / 64), ((e.getY() - 31) / 64));
             oldTile = getTile(((e.getX() - 8) / 64), ((e.getY() - 31) / 64));
 
@@ -195,52 +208,18 @@ public class Board {
             System.out.println(Arrays.toString(tiles[(e.getY() - 31) / 64][(e.getX() - 8) / 64].getCoordinates()));
             System.out.println(selectedPiece);
 
-        } else if(!tiles[(e.getY() - 31) / 64][(e.getX() - 8) / 64].isOccupied()) {// if there isn't a piece then move it according to the rules
+        } else if(!getTile(((e.getX() - 8) / 64), ((e.getY() - 31) / 64)).isOccupied()) {// if there isn't a piece then move it according to the rules
             if(selectedPiece != null) {
                 Tile newTile = getTile(((e.getX() - 8) / 64), ((e.getY() - 31) / 64));//get tile where to move piece
-                if(Objects.equals(selectedPiece.getName(), "pawn")) {
-                    if(selectedPiece.moveValidator(newTile, tiles)) {
-                        performMove(e, newTile);
-                    } else {
-                        throw new IllegalAccessException("move isn't valid");
+                switch (selectedPiece.getName()) {
+                    case "pawn", "Knight", "bishop", "rook", "king", "queen" -> {
+                        if (selectedPiece.moveValidator(newTile, tiles)) {
+                            performMove(e, newTile);
+                        } else {
+                            throw new IllegalAccessException("move isn't valid");
+                        }
                     }
-                }
-                else if(Objects.equals(selectedPiece.getName(), "knight")) {
-                    if(selectedPiece.moveValidator(newTile, tiles)) {
-                        performMove(e, newTile);
-                    } else {
-                        throw new IllegalAccessException("move isn't valid");
-                    }
-                }
-                else if(Objects.equals(selectedPiece.getName(), "bishop")) {
-                    if(selectedPiece.moveValidator(newTile, tiles)) {
-                        performMove(e, newTile);
-                    } else {
-                        throw new IllegalAccessException("move isn't valid");
-                    }
-                }
-                else if(Objects.equals(selectedPiece.getName(), "rook")) {
-                    if(selectedPiece.moveValidator(newTile, tiles)) {
-                        performMove(e, newTile);
-                    } else {
-                        throw new IllegalAccessException("move isn't valid");
-                    }
-                }
-                else if(Objects.equals(selectedPiece.getName(), "king")) {
-                    if(selectedPiece.moveValidator(newTile, tiles)) {
-                        performMove(e, newTile);
-                    } else {
-                        throw new IllegalAccessException("move isn't valid");
-                    }
-                }
-                else if(Objects.equals(selectedPiece.getName(), "queen")) {
-                    if(selectedPiece.moveValidator(newTile, tiles)) {
-                        performMove(e, newTile);
-                    } else {
-                        throw new IllegalAccessException("move isn't valid");
-                    }
-                } else {
-                    System.out.println("something got wrong");
+                    default -> System.out.println("something got wrong");
                 }
             }
         }
@@ -255,9 +234,9 @@ public class Board {
         tile.setOccupied(true);
 
         //removing from old tile
+        oldTile.setOccupied(false);
         oldTile.removeLabelFromPanel(oldTile.getPanel());
         oldTile.setPiece(null);
-        oldTile.setOccupied(false);
 
                         System.out.println("| else |");
                         System.out.println("new tile coords: " + Arrays.toString(tile.getCoordinates()));
@@ -279,7 +258,6 @@ public class Board {
         //setting new tile
         tile.setPiece(selectedPiece);
         tile.addLabelToPanel(new JLabel(selectedPiece.getImgIcon()));
-        tile.setOccupied(true);
 
         //removing from old tile
         oldTile.removeLabelFromPanel(oldTile.getPanel());
