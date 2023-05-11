@@ -120,7 +120,27 @@ class Rook extends Piece {
 
     @Override
     public boolean moveValidator(Tile tile, Tile[][] tiles) {
-        return false;
+        int[] vector = new int[]{tile.getX() - this.x, tile.getY() - this.y};
+
+        // Rook can only move in straight lines
+        if (Math.abs(vector[0]) != 0 && Math.abs(vector[1]) != 0) {
+            return false;
+        }
+
+        // Check for any obstructions on the path of the rook
+        int xStep = Integer.signum(vector[0]);
+        int yStep = Integer.signum(vector[1]);
+        int x = this.x + xStep;
+        int y = this.y + yStep;
+        while (x != tile.getX() || y != tile.getY()) {
+            if (tiles[y][x].isOccupied()) {
+                return false;
+            }
+            x += xStep;
+            y += yStep;
+        }
+
+        return true;
     }
 
     @Override
@@ -137,8 +157,10 @@ class Knight extends Piece {
 
     @Override
     public boolean moveValidator(Tile tile, Tile[][] tiles) {
-        return false;
+        int[] vector = new int[]{tile.getX() - this.x, tile.getY() - this.y};
+        return (Math.abs(vector[0]) == 1 && Math.abs(vector[1]) == 2) || (Math.abs(vector[0]) == 2 && Math.abs(vector[1]) == 1);
     }
+
 
     @Override
     public boolean validMoves(Tile tile, Tile[][] tiles) {
@@ -165,46 +187,54 @@ class Bishop extends Piece {
         int[] vector = new int[]{tile.getX() - this.x, tile.getY() - this.y};
         if( Math.abs(vector[0]) == Math.abs(vector[1]) ) {
             if (this.x < tile.getX() && this.y < tile.getY()) {//right bottom
+                int n = 0;
                 for (int i = this.x + 1; i < tile.getX(); i++) {// x coordinate
-                    for (int j = this.y + 1; j < tile.getY(); j++) {//y coordinate
+                    for (int j = this.y + 1; j < tile.getY(); j += n) {//y coordinate
                         if ((vector[0] / (i - this.x)) == (vector[1] / (j - this.y))) {
                             if (tiles[j][i].isOccupied()) {
                                 return false;
                             }
                         }
+                        n++;
                     }
                 }
                 return (vector[0] / (tile.getX() - this.x)) == (vector[1] / (tile.getY() - this.y));
             } else if (this.x > tile.getX() && this.y > tile.getY()) {//left top
+                int n = 0;
                 for (int i = this.x - 1; i >= tile.getX(); i--) {// x coordinate
-                    for (int j = this.y - 1; j >= tile.getY(); j--) {//y coordinate
+                    for (int j = this.y - 1; j >= tile.getY(); j -= n) {//y coordinate
                         if ((vector[0] / (i - this.x)) == (vector[1] / (j - this.y))) {
                             if (tiles[j][i].isOccupied()) {
                                 return false;
                             }
                         }
+                        n++;
                     }
                 }
                 return (vector[0] / (tile.getX() - this.x)) == (vector[1] / (tile.getY() - this.y));
             } else if (this.x < tile.getX() && this.y > tile.getY()) {//right top
+                int n = 0;
                 for (int i = this.x + 1; i < tile.getX(); i++) {// x coordinate
-                    for (int j = this.y - 1; j >= tile.getY(); j--) {//y coordinate
+                    for (int j = this.y - 1; j >= tile.getY(); j -= n) {//y coordinate
                         if ((vector[0] / (i - this.x)) == (vector[1] / (j - this.y))) {
                             if (tiles[j][i].isOccupied()) {
                                 return false;
                             }
                         }
+                        n++;
                     }
                 }
                 return (vector[0] / (tile.getX() - this.x)) == (vector[1] / (tile.getY() - this.y));
             } else if (this.x > tile.getX() && this.y < tile.getY()) {//left bottom
+                int n = 0;
                 for (int i = this.x - 1; i >= tile.getX(); i--) {//x coordinate
-                    for (int j = this.y + 1; j < tile.getY(); j++) {//y coordinate
+                    for (int j = this.y + 1; j < tile.getY(); j += n) {//y coordinate
                         if ((vector[0] / (i - this.x)) == (vector[1] / (j - this.y))) {
                             if (tiles[j][i].isOccupied()) {
                                 return false;
                             }
                         }
+                        n++;
                     }
                 }
                 return (vector[0] / (tile.getX() - this.x)) == (vector[1] / (tile.getY() - this.y));
@@ -227,8 +257,44 @@ class Queen extends Piece {
 
     @Override
     public boolean moveValidator(Tile tile, Tile[][] tiles) {
-        return false;
+        int[] vector = new int[]{tile.getX() - this.x, tile.getY() - this.y};
+
+        // Rook can only move in straight lines
+        if (Math.abs(vector[0]) != 0 && Math.abs(vector[1]) != 0) {
+            // Bishop and Queen can move diagonally
+            if (Math.abs(vector[0]) != Math.abs(vector[1])) {
+                return false;
+            }
+            // Check for any obstructions on the path of the bishop
+            int xStep = Integer.signum(vector[0]);
+            int yStep = Integer.signum(vector[1]);
+            int x = this.x + xStep;
+            int y = this.y + yStep;
+            while (x != tile.getX() || y != tile.getY()) {
+                if (tiles[y][x].isOccupied()) {
+                    return false;
+                }
+                x += xStep;
+                y += yStep;
+            }
+        } else {
+            // Check for any obstructions on the path of the rook
+            int xStep = Integer.signum(vector[0]);
+            int yStep = Integer.signum(vector[1]);
+            int x = this.x + xStep;
+            int y = this.y + yStep;
+            while (x != tile.getX() || y != tile.getY()) {
+                if (tiles[y][x].isOccupied()) {
+                    return false;
+                }
+                x += xStep;
+                y += yStep;
+            }
+        }
+
+        return true;
     }
+
 
     @Override
     public boolean validMoves(Tile tile, Tile[][] tiles) {
@@ -244,7 +310,13 @@ class King extends Piece {
 
     @Override
     public boolean moveValidator(Tile tile, Tile[][] tiles) {
-        return false;
+        int[] vector = new int[]{tile.getX() - this.x, tile.getY() - this.y};
+        if (Math.abs(vector[0]) > 1 || Math.abs(vector[1]) > 1) {
+            // King can move only one square in any direction
+            return false;
+        }
+        // Check for any obstructions on the path of the King (there shouldn't be any)
+        return !tile.isOccupied();
     }
 
     @Override
@@ -252,4 +324,3 @@ class King extends Piece {
         return false;
     }
 }
-
