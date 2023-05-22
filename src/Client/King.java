@@ -24,8 +24,6 @@ class King extends Piece implements checkMateValidator{
     public boolean validCheck(LinkedList<Piece> pieceLinkedList, Tile tile) {
         if(this.isWhite()) {
             return true;
-        } else {
-            return true;
         }
 
 
