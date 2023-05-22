@@ -18,7 +18,7 @@ public class Board {
     private Tile oldTile;
     private boolean isPieceSelected = false;
 
-    Board() {
+    public Board() {
         initFrame();
         drawBoard();
         frame.setVisible(true);
@@ -54,41 +54,41 @@ public class Board {
 
     private void drawPieces() {
 
-        Rook rookBlackLeft          = new   Rook(0, 0, false, pieceList, "rook", "../img/b_rook_png_128px.png");
-        Knight knightBlackLeft      = new Knight(1, 0, false, pieceList, "knight", "../img/b_knight_png_128px.png");
-        Bishop bishopBlackLeft      = new Bishop(2, 0, false, pieceList, "bishop", "../img/b_bishop_png_128px.png");
-        Queen queenBlack            = new  Queen(3, 0, false, pieceList, "queen", "../img/b_queen_png_128px.png");
-        King kingBlack              = new   King(4, 0, false, pieceList, "king", "../img/b_king_png_128px.png");
-        Bishop bishopBlackRight     = new Bishop(5, 0, false, pieceList, "bishop", "../img/b_bishop_png_128px.png");
-        Knight knightBlackRight     = new Knight(6, 0, false, pieceList, "knight", "../img/b_knight_png_128px.png");
-        Rook rookBlackRight         = new   Rook(7, 0, false, pieceList, "rook", "../img/b_rook_png_128px.png");
+        Rook rookBlackLeft          = new   Rook(0, 0, false, pieceList, "rook", "img/b_rook_png_128px.png");
+        Knight knightBlackLeft      = new Knight(1, 0, false, pieceList, "knight", "img/b_knight_png_128px.png");
+        Bishop bishopBlackLeft      = new Bishop(2, 0, false, pieceList, "bishop", "img/b_bishop_png_128px.png");
+        Queen queenBlack            = new  Queen(3, 0, false, pieceList, "queen", "img/b_queen_png_128px.png");
+        King kingBlack              = new   King(4, 0, false, pieceList, "king", "img/b_king_png_128px.png");
+        Bishop bishopBlackRight     = new Bishop(5, 0, false, pieceList, "bishop", "img/b_bishop_png_128px.png");
+        Knight knightBlackRight     = new Knight(6, 0, false, pieceList, "knight", "img/b_knight_png_128px.png");
+        Rook rookBlackRight         = new   Rook(7, 0, false, pieceList, "rook", "img/b_rook_png_128px.png");
 
-        Pawn pawnBlackA = new Pawn(0, 1, false, pieceList, "pawn", "../img/b_pawn_png_128px.png");
-        Pawn pawnBlackC = new Pawn(1, 1, false, pieceList, "pawn", "../img/b_pawn_png_128px.png");
-        Pawn pawnBlackD = new Pawn(2, 1, false, pieceList, "pawn", "../img/b_pawn_png_128px.png");
-        Pawn pawnBlackB = new Pawn(3, 1, false, pieceList, "pawn", "../img/b_pawn_png_128px.png");
-        Pawn pawnBlackE = new Pawn(4, 1, false, pieceList, "pawn", "../img/b_pawn_png_128px.png");
-        Pawn pawnBlackF = new Pawn(5, 1, false, pieceList, "pawn", "../img/b_pawn_png_128px.png");
-        Pawn pawnBlackG = new Pawn(6, 1, false, pieceList, "pawn", "../img/b_pawn_png_128px.png");
-        Pawn pawnBlackH = new Pawn(7, 1, false, pieceList, "pawn", "../img/b_pawn_png_128px.png");
+        Pawn pawnBlackA = new Pawn(0, 1, false, pieceList, "pawn", "img/b_pawn_png_128px.png");
+        Pawn pawnBlackC = new Pawn(1, 1, false, pieceList, "pawn", "img/b_pawn_png_128px.png");
+        Pawn pawnBlackD = new Pawn(2, 1, false, pieceList, "pawn", "img/b_pawn_png_128px.png");
+        Pawn pawnBlackB = new Pawn(3, 1, false, pieceList, "pawn", "img/b_pawn_png_128px.png");
+        Pawn pawnBlackE = new Pawn(4, 1, false, pieceList, "pawn", "img/b_pawn_png_128px.png");
+        Pawn pawnBlackF = new Pawn(5, 1, false, pieceList, "pawn", "img/b_pawn_png_128px.png");
+        Pawn pawnBlackG = new Pawn(6, 1, false, pieceList, "pawn", "img/b_pawn_png_128px.png");
+        Pawn pawnBlackH = new Pawn(7, 1, false, pieceList, "pawn", "img/b_pawn_png_128px.png");
 
-        Pawn pawnWhiteA = new Pawn(0, 6, true, pieceList, "pawn", "../img/w_pawn_png_128px.png");
-        Pawn pawnWhiteB = new Pawn(1, 6, true, pieceList, "pawn", "../img/w_pawn_png_128px.png");
-        Pawn pawnWhiteC = new Pawn(2, 6, true, pieceList, "pawn", "../img/w_pawn_png_128px.png");
-        Pawn pawnWhiteD = new Pawn(3, 6, true, pieceList, "pawn", "../img/w_pawn_png_128px.png");
-        Pawn pawnWhiteE = new Pawn(4, 6, true, pieceList, "pawn", "../img/w_pawn_png_128px.png");
-        Pawn pawnWhiteF = new Pawn(5, 6, true, pieceList, "pawn", "../img/w_pawn_png_128px.png");
-        Pawn pawnWhiteG = new Pawn(6, 6, true, pieceList, "pawn", "../img/w_pawn_png_128px.png");
-        Pawn pawnWhiteH = new Pawn(7, 6, true, pieceList, "pawn", "../img/w_pawn_png_128px.png");
+        Pawn pawnWhiteA = new Pawn(0, 6, true, pieceList, "pawn", "img/w_pawn_png_128px.png");
+        Pawn pawnWhiteB = new Pawn(1, 6, true, pieceList, "pawn", "img/w_pawn_png_128px.png");
+        Pawn pawnWhiteC = new Pawn(2, 6, true, pieceList, "pawn", "img/w_pawn_png_128px.png");
+        Pawn pawnWhiteD = new Pawn(3, 6, true, pieceList, "pawn", "img/w_pawn_png_128px.png");
+        Pawn pawnWhiteE = new Pawn(4, 6, true, pieceList, "pawn", "img/w_pawn_png_128px.png");
+        Pawn pawnWhiteF = new Pawn(5, 6, true, pieceList, "pawn", "img/w_pawn_png_128px.png");
+        Pawn pawnWhiteG = new Pawn(6, 6, true, pieceList, "pawn", "img/w_pawn_png_128px.png");
+        Pawn pawnWhiteH = new Pawn(7, 6, true, pieceList, "pawn", "img/w_pawn_png_128px.png");
 
-        Rook rookWhiteLeft          = new   Rook(0, 7, true, pieceList, "rook", "../img/w_rook_png_128px.png");
-        Knight knightWhiteLeft      = new Knight(1, 7, true, pieceList, "knight", "../img/w_knight_png_128px.png");
-        Bishop bishopWhiteLeft      = new Bishop(2, 7, true, pieceList, "bishop", "../img/w_bishop_png_128px.png");
-        Queen queenWhite            = new  Queen(3, 7, true, pieceList, "queen", "../img/w_queen_png_128px.png");
-        King kingWhite              = new   King(4, 7, true, pieceList, "king", "../img/w_king_png_128px.png");
-        Bishop bishopWhiteRight     = new Bishop(5, 7, true, pieceList, "bishop", "../img/w_bishop_png_128px.png");
-        Knight knightWhiteRight     = new Knight(6, 7, true, pieceList, "knight", "../img/w_knight_png_128px.png");
-        Rook rookWhiteRight         = new   Rook(7, 7, true, pieceList, "rook", "../img/w_rook_png_128px.png");
+        Rook rookWhiteLeft          = new   Rook(0, 7, true, pieceList, "rook", "img/w_rook_png_128px.png");
+        Knight knightWhiteLeft      = new Knight(1, 7, true, pieceList, "knight", "img/w_knight_png_128px.png");
+        Bishop bishopWhiteLeft      = new Bishop(2, 7, true, pieceList, "bishop", "img/w_bishop_png_128px.png");
+        Queen queenWhite            = new  Queen(3, 7, true, pieceList, "queen", "img/w_queen_png_128px.png");
+        King kingWhite              = new   King(4, 7, true, pieceList, "king", "img/w_king_png_128px.png");
+        Bishop bishopWhiteRight     = new Bishop(5, 7, true, pieceList, "bishop", "img/w_bishop_png_128px.png");
+        Knight knightWhiteRight     = new Knight(6, 7, true, pieceList, "knight", "img/w_knight_png_128px.png");
+        Rook rookWhiteRight         = new   Rook(7, 7, true, pieceList, "rook", "img/w_rook_png_128px.png");
 
 
         for(int i = 0, index = 0; i < tiles.length; i++) {//adding pieces to their tiles
