@@ -190,7 +190,7 @@ public class Board {
             if(selectedPiece != null && getTile(((e.getX() - 8) / 64), ((e.getY() - 31) / 64)).getPiece().isWhite() != selectedPiece.isWhite()) {
                 Tile newTile = getTile(((e.getX() - 8) / 64), ((e.getY() - 31) / 64));//get tile where to move piece
                 switch (selectedPiece.getName()) {
-                    case "pawn", "Knight", "bishop", "rook", "king", "queen" -> {
+                    case "pawn", "knight", "bishop", "rook", "king", "queen" -> {
                         if (selectedPiece.moveValidator(newTile, tiles)) {
                             capture(e, newTile);
                         } else {
@@ -212,7 +212,7 @@ public class Board {
             if(selectedPiece != null) {
                 Tile newTile = getTile(((e.getX() - 8) / 64), ((e.getY() - 31) / 64));//get tile where to move piece
                 switch (selectedPiece.getName()) {
-                    case "pawn", "Knight", "bishop", "rook", "king", "queen" -> {
+                    case "pawn", "knight", "bishop", "rook", "king", "queen" -> {
                         if (selectedPiece.moveValidator(newTile, tiles)) {
                             performMove(e, newTile);
                         } else {

@@ -12,7 +12,8 @@ import java.util.LinkedList;
 public class chessGame {
     public static void main(String[] args) throws Exception {
 
-        JFrame gameFrame = new Board().getFrame();
+        Menu menuFrame = new Menu();
+//        JFrame gameFrame = new Board().getFrame();
     }
 }
 
