@@ -1,3 +1,5 @@
+package Client;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -6,8 +8,8 @@ public class Tile {
     private int y;
     private boolean isOccupied;
     private Piece piece;
-
     private JPanel panel;
+
 
     public Tile(int x, int y, boolean isOccupied) {
         this.x = x;

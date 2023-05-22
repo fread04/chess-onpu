@@ -1,3 +1,5 @@
+package Client;
+
 import java.net.*;
 import java.io.*;
 import java.util.Scanner;
@@ -24,7 +26,7 @@ class Client {
             Scanner scanner = new Scanner(System.in);
 
             while (true) {
-                System.out.print("Client: ");
+                System.out.print("Client.Client: ");
                 String msgToServer = scanner.nextLine();
 
                 bufferedWriter.write(msgToServer);
@@ -32,7 +34,7 @@ class Client {
                 bufferedWriter.flush();
 
                 String msgFromServer = bufferedReader.readLine();
-                System.out.println("Server: " + msgFromServer);
+                System.out.println("Server.Server: " + msgFromServer);
 
                 if(msgToServer.equalsIgnoreCase("bye")) break;
 

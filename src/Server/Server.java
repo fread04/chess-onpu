@@ -1,3 +1,5 @@
+package Server;
+
 import java.net.*;
 import java.io.*;
 import java.util.Scanner;
@@ -29,7 +31,7 @@ class Server {
                     String msgFromClient = bufferedReader.readLine();
                     System.out.println("Client: " + msgFromClient);
 
-                    System.out.print("Server: ");
+                    System.out.print("Server.Server: ");
                     String msgToClient = scanner.nextLine();
 
                     bufferedWriter.write(msgToClient);
