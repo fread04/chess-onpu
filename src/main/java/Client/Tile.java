@@ -83,3 +83,7 @@ public class Tile {
         this.piece = piece;
     }
 }
+
+
+//new Color(106, 119, 135)
+//new Color(42, 47, 54)

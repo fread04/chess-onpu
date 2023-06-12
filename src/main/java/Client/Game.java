@@ -1,48 +1,29 @@
 package Client;
 
+import Server.Server;
+
 import javax.swing.*;
 
 public class Game {
-    private Player activePlayer;
-    private Player whitePlayer;
-    private Player blackPlayer;
-    private final Board board = new Board();
-    private final JFrame gamePanel = board.getFrame();
+    private final Board board;
+    private JFrame gamePanel;
 
+
+    public Game(JFrame mainFrame, Client client) {
+        this.board = new Board(mainFrame, client);
+        client.initBoard(board);
+        System.out.println("Game client: " + client);
+        gamePanel = board.getFrame();
+    }
+
+    public Game(JFrame mainFrame, Server server) {
+        this.board = new Board(mainFrame, server);
+        server.initBoard(board);
+        System.out.println("Game server: " + server);
+        gamePanel = board.getFrame();
+    }
 
     public Game() {
-        createPlayers();
-    }
-
-    private void createPlayers() {
-        this.whitePlayer = new Player("white");
-        this.blackPlayer = new Player("black");
-    }
-
-    private void swapTurn() {
-        if(whitePlayer.getActiveTurn()) {
-            blackPlayer.setActiveTurn(true);
-        } else {
-            whitePlayer.setActiveTurn(true);
-        }
-    }
-
-    public void makeTurn(Player p) {
-        setActivePlayer(p);
-    }
-
-    public void setActivePlayer(Player p) {
-        this.activePlayer = p;
-    }
-
-    public Player getActivePlayer() {
-        return activePlayer;
-    }
-    public JFrame getGamePanel() {
-        return gamePanel;
-    }
-
-    public Board getBoard() {
-        return board;
+        this.board = new Board();
     }
 }

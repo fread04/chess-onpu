@@ -1,5 +1,6 @@
 package Client;
 
+import Server.Server;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -13,25 +14,43 @@ import java.util.LinkedList;
 public class Board {
     private final JFrame frame = new JFrame();
     private final Tile[][] tiles = new Tile[8][8];
+    private JFrame mainFrame;
+    private Client client;
+    private Server server;
     public LinkedList<Piece> pieceList = new LinkedList<>();
     private Piece selectedPiece;
-
     GsonBuilder builder = new GsonBuilder();
-    Gson gson = builder.setPrettyPrinting()
-            .create();
-
-    private Player activeTurn;
+    Gson gson = builder.setPrettyPrinting().create();
     private Tile oldTile;
-    private boolean isPieceSelected = false;
+
+
+    public Board(JFrame mainFrame, Client client) {
+        this.mainFrame = mainFrame;
+        this.client = client;
+//        this.client.initBoard(this);
+
+        initFrame();
+        drawBoard();
+        moveableBoard();
+        frame.setVisible(true);
+    }
+
+    public Board(JFrame mainFrame, Server server) {
+        this.mainFrame = mainFrame;
+        this.server = server;
+//        this.server.initBoard(this);
+
+        initFrame();
+        drawBoard();
+        moveableBoard();
+        frame.setVisible(true);
+    }
 
     public Board() {
         initFrame();
         drawBoard();
         moveableBoard();
         frame.setVisible(true);
-//        System.out.println(pieceList.toString());
-//        System.out.println("from tile: " + tiles[0][0].getPiece() + " from list: " + pieceList.get(0).toString());
-        System.out.println();
     }
 
     private void initFrame() {
@@ -45,7 +64,7 @@ public class Board {
     private void drawBoard() {
         for(int i = 0; i < tiles.length; i++) { //y coord
             for (int j = 0; j < tiles.length; j++) {// x coord
-                tiles[i][j] = new Tile(j, i, false);
+                tiles[j][i] = new Tile(i, j, false);
             }
         }
 
@@ -99,8 +118,6 @@ public class Board {
         for(int i = 0, index = 0; i < tiles.length; i++) {//adding pieces to their tiles
             for(int j = 0; j < tiles.length; j++) {
                 if(pieceList.get(index).getY() == i && pieceList.get(index).getX() == j) {
-//                    System.out.println(index);
-//                    System.out.println(pieceList.get(index).getName());
                     tiles[i][j].setPiece(pieceList.get(index));
                     tiles[i][j].addLabelToPanel(new JLabel(pieceList.get(index).getImgIcon()));
                     tiles[i][j].setOccupied(true);
@@ -181,13 +198,6 @@ public class Board {
         return null;
     }
 
-    private boolean isPieceSelected(Piece selectedPiece) {
-        if(selectedPiece != null) {
-            return isPieceSelected = true;
-        }
-        return  isPieceSelected = false;
-    }
-
     private void makeMove(MouseEvent e) throws Exception {
         if(getTile(((e.getX() - 8) / 64), ((e.getY() - 31) / 64)).isOccupied()) {// take a piece if there is no piece
             if(selectedPiece != null && getTile(((e.getX() - 8) / 64), ((e.getY() - 31) / 64)).getPiece().isWhite() != selectedPiece.isWhite()) {
@@ -195,6 +205,16 @@ public class Board {
                 switch (selectedPiece.getName()) {
                     case "pawn", "knight", "bishop", "rook", "king", "queen" -> {
                         if (selectedPiece.moveValidator(newTile, tiles)) {
+
+                            System.out.println(this.client);
+                            if(client != null) {
+                                client.write(selectedPiece.getX() + " " + selectedPiece.getY() + " " + (e.getX() - 8) / 64 + " " + (e.getY() - 31) / 64);
+                            }
+                            System.out.println(this.server);
+                            if(server != null) {
+                                server.getHandler().write(selectedPiece.getX() + " " + selectedPiece.getY() + " " + (e.getX() - 8) / 64 + " " + (e.getY() - 31) / 64);
+                            }
+
                             capture(e, newTile);
                         } else {
                             throw new IllegalAccessException("move isn't valid");
@@ -207,19 +227,21 @@ public class Board {
                 oldTile = getTile(((e.getX() - 8) / 64), ((e.getY() - 31) / 64));
             }
 
-            System.out.println("| if |");
-            System.out.println("old tile is occupied: " + oldTile.isOccupied());
-            System.out.println(Arrays.toString(tiles[(e.getY() - 31) / 64][(e.getX() - 8) / 64].getCoordinates()));
-            System.out.println(selectedPiece);
-
-            System.out.println(gson.toJson(selectedPiece, Piece.class));
-
         } else if(!getTile(((e.getX() - 8) / 64), ((e.getY() - 31) / 64)).isOccupied()) {// if there isn't a piece then move it according to the rules
             if(selectedPiece != null) {
                 Tile newTile = getTile(((e.getX() - 8) / 64), ((e.getY() - 31) / 64));//get tile where to move piece
                 switch (selectedPiece.getName()) {
                     case "pawn", "knight", "bishop", "rook", "king", "queen" -> {
                         if (selectedPiece.moveValidator(newTile, tiles)) {
+
+                            if(client != null) {
+                                client.write(selectedPiece.getX() + " " + selectedPiece.getY() + " " + (e.getX() - 8) / 64 + " " + (e.getY() - 31) / 64);
+                            }
+
+                            if(server != null) {
+                                server.getHandler().write(selectedPiece.getX() + " " + selectedPiece.getY() + " " + ((e.getX() - 8) / 64) + " " + ((e.getY() - 31) / 64));
+                            }
+
                             performMove(e, newTile);
                         } else {
                             throw new IllegalAccessException(selectedPiece.getName() + "'s move isn't valid");
@@ -244,11 +266,28 @@ public class Board {
         oldTile.removeLabelFromPanel(oldTile.getPanel());
         oldTile.setPiece(null);
 
-                        System.out.println("| else |");
-                        System.out.println("new tile coords: " + Arrays.toString(tile.getCoordinates()));
-                        System.out.println("old tile is occupied: " + oldTile.isOccupied());
-                        System.out.println(Arrays.toString(oldTile.getCoordinates()));
-                        System.out.println("new tile is occupied: " + tile.isOccupied());
+        //setting variable to null for future work
+        selectedPiece = null;
+    }
+
+    public void performMove(int oldX, int oldY, int curX, int curY) {
+
+
+        selectedPiece = tiles[oldY][oldX].getPiece();
+
+        tiles[curY][curX].setPiece(selectedPiece);
+        tiles[curY][curX].addLabelToPanel(new JLabel(selectedPiece.getImgIcon()));
+        tiles[curY][curX].setOccupied(true);
+
+        //removing from old tile
+
+//        tiles[oldX][oldY].setOccupied(false);
+//        tiles[oldX][oldY].removeLabelFromPanel(oldTile.getPanel());
+//        tiles[oldX][oldY].setPiece(null);
+
+        tiles[oldY][oldX].setOccupied(false);
+        tiles[oldY][oldX].removeLabelFromPanel(tiles[oldY][oldX].getPanel());
+        tiles[oldY][oldX].setPiece(null);
 
         //setting variable to null for future work
         selectedPiece = null;
@@ -275,15 +314,12 @@ public class Board {
     }
 
 
+
     public JFrame getFrame() {
         return frame;
     }
 
     public Tile[][] getTiles() {
         return tiles;
-    }
-
-    public Piece getSelectedPiece() {
-        return selectedPiece;
     }
 }

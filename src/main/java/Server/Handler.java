@@ -1,30 +1,29 @@
-package Client;
+package Server;
 
-import javax.swing.*;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
+import Client.Board;
+
 import java.io.*;
-import java.lang.ref.Cleaner;
 import java.net.Socket;
 
-public class Client {
+public class Handler {
     private Socket socket;
     private BufferedWriter writer;
-    private String messageFromServer;
     private BufferedReader reader;
+    private String messageFromClient;
     private Board board;
     private final int[] parsedString = new int[4];
 
 
-    Client(String host, int port) throws IOException{
+    Handler(Socket socket, Board board) {
         try {
-            socket = new Socket(host, port);
+            this.socket = socket;
+            this.board = board;
             writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
             reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             Thread listener = new Thread(this::listen);
             listener.start();
         } catch (IOException e) {
-            closeClient();
+            closeSocket(socket, writer, reader);
         }
     }
 
@@ -38,49 +37,40 @@ public class Client {
             writer.newLine();
             writer.flush();
         } catch (IOException e) {
-            closeClient();
+            e.printStackTrace();
         }
     }
 
     private void listen() {
         while(socket.isConnected()) {
             try {
-                messageFromServer = reader.readLine();
-                System.out.println("[SERVER]: " + messageFromServer);
+                messageFromClient = reader.readLine();
+                System.out.println("[Client]: " + messageFromClient);
                 parseString();
                 board.performMove(parsedString[0], parsedString[1], parsedString[2], parsedString[3]);
             } catch (IOException e) {
-                closeClient();
+                closeSocket(socket, writer, reader);
+                break;
             }
         }
     }
 
     private void parseString() {
-        String[] token = messageFromServer.split(" ");
+        String[] token = messageFromClient.split(" ");
         for(int i = 0; i < token.length; i++) {
             parsedString[i] = Integer.parseInt(token[i]);
         }
     }
 
-    private void closeClient() {
+    private void closeSocket(Socket socket, BufferedWriter writer, BufferedReader reader) {
+        System.out.println("[SERVER]: client has left");
         try {
-            socket.close();
             writer.close();
             reader.close();
+            socket.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public Socket getSocket() {
-        return socket;
-    }
-
-    public BufferedWriter getWriter() {
-        return writer;
-    }
-
-    public BufferedReader getReader() {
-        return reader;
-    }
 }

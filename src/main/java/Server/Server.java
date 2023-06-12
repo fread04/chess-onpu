@@ -1,47 +1,59 @@
 package Server;
 
-import java.io.IOException;
+import Client.Board;
+
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.stream.Stream;
 
 public class Server {
-
     private ServerSocket serverSocket;
+    private Socket socket;
+    private final int PORT = 9091;
+    private Handler handler;
+    private Board board;
 
-    public Server(ServerSocket serverSocket) {
-        this.serverSocket = serverSocket;
-    }
-
-    public void startServer() {
+    public Server() {
         try {
-            System.out.println("Server started");
-            while(!serverSocket.isClosed()) {
-                Socket socket = serverSocket.accept();
-                System.out.println("A new client connected");
-                ClientHandler clientHandler = new ClientHandler(socket);
-
-                Thread thread = new Thread(clientHandler);
-                thread.start();
-            }
+            serverSocket = new ServerSocket(PORT);
         } catch (IOException e) {
-            closeServerSocket();
+            closeServer();
         }
     }
 
-    public void closeServerSocket() {
+    public void startServer() {
+        System.out.println("[SERVER]: server listening on port: " + PORT);
+        while (!serverSocket.isClosed()) {
+            new Thread(() -> {
+                try {
+                    this.socket = serverSocket.accept();
+                    this.handler = new Handler(socket, board);
+                    System.out.println("[SERVER]: new client connected");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }).start();
+        }
+    }
+
+    public void initBoard(Board board) {
+        this.board = board;
+    }
+
+    private void closeServer() {
         try {
-            if(serverSocket != null) {
-                serverSocket.close();
-            }
+            serverSocket.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public static void main(String[] args) throws IOException {
-        ServerSocket serverSocket = new ServerSocket(9091);
-        Server server = new Server(serverSocket);
-        server.startServer();
+    public Handler getHandler() {
+        return this.handler;
     }
+
+    public static void main(String[] args) {
+        new Server();
+    }
+
 }

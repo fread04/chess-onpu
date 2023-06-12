@@ -10,7 +10,7 @@ class Knight extends Piece {
 
     @Override
     public boolean moveValidator(Tile tile, Tile[][] tiles) {
-        int[] vector = new int[]{tile.getX() - this.x, tile.getY() - this.y};
+        int[] vector = new int[]{tile.getX() - this.getX(), tile.getY() - this.getY()};
         return (Math.abs(vector[0]) == 1 && Math.abs(vector[1]) == 2) || (Math.abs(vector[0]) == 2 && Math.abs(vector[1]) == 1);
     }
 }

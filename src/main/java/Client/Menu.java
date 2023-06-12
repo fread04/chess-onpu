@@ -1,12 +1,20 @@
 package Client;
 
+import Server.Server;
+
 import javax.swing.*;
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.Socket;
+import java.net.SocketAddress;
 
 public class Menu {
-
     private final JFrame frame = new JFrame();
+    private final int PORT = 9091;
+    private Server server;
+    private Client client;
 
-    Menu() {
+    public Menu() {
         initFrame();
         createMenuPanel();
     }
@@ -55,14 +63,31 @@ public class Menu {
                 JButton connectButton = new Button("Connect", 100, 110, 100, 30, this.getPanel()).getButton();
                 JButton backButton = new Button("Back", 100, 150, 100, 30, this.getPanel()).getButton();
 
-                hostButton.addActionListener(e -> {
+                hostButton.addActionListener(e -> {// click to host game
                     removeAllPanels();
                     //TODO: create new panel attached to this button
+
+                    server = new Server();
+                    System.out.println(server);
+                    new Thread(() -> server.startServer()).start();
+
+                    frame.setVisible(false);
+                    new Game(frame, server);
+
                 });
 
-                connectButton.addActionListener(e -> {
+                connectButton.addActionListener(e -> {// click to connect to existing game
                     removeAllPanels();
-                    //TODO: create new panel attached to this button
+                    frame.setVisible(false);
+
+                    try {
+                        client = new Client("localhost", PORT);
+                        System.out.println(client);
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                        exit();
+                    }
+                    new Game(frame, client);
                 });
 
                 backButton.addActionListener(e -> {
@@ -74,6 +99,7 @@ public class Menu {
         }.getPanel();
     }
 
+    //#
     private void createHostPanel() {
         JPanel hostPanel = new Panel(frame, 0, 0, 532, 552) {
             @Override
@@ -96,6 +122,10 @@ public class Menu {
     private void removeAllPanels() {
         frame.getContentPane().removeAll();
         frame.repaint();
+    }
+
+    private int exit() {
+        return 0;
     }
 
     public static void main(String[] args) {

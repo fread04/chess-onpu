@@ -10,7 +10,7 @@ class Rook extends Piece {
 
     @Override
     public boolean moveValidator(Tile tile, Tile[][] tiles) {
-        int[] vector = new int[]{tile.getX() - this.x, tile.getY() - this.y};
+        int[] vector = new int[]{tile.getX() - this.getX(), tile.getY() - this.getY()};
 
         // Client.Rook can only move in straight lines
         if (Math.abs(vector[0]) != 0 && Math.abs(vector[1]) != 0) {
@@ -20,8 +20,8 @@ class Rook extends Piece {
         // Check for any obstructions on the path of the rook
         int xStep = Integer.signum(vector[0]);
         int yStep = Integer.signum(vector[1]);
-        int x = this.x + xStep;
-        int y = this.y + yStep;
+        int x = this.getX() + xStep;
+        int y = this.getY() + yStep;
         while (x != tile.getX() || y != tile.getY()) {
             if (tiles[y][x].isOccupied()) {
                 return false;

@@ -10,17 +10,17 @@ class Pawn extends Piece {
     @Override
     public boolean moveValidator(Tile tile, Tile[][] tiles) {//REDO
         if (!isPawnMoved) {
-            if (this.x == tile.getX() && Math.abs(this.y - tile.getY()) == 1 || Math.abs(this.y - tile.getY()) == 2) {
+            if (this.getX() == tile.getX() && Math.abs(this.getY() - tile.getY()) == 1 || Math.abs(this.getY() - tile.getY()) == 2) {
                 isPawnMoved = true;
                 return true;
-            } else if(Math.abs(this.x - tile.getX()) == 1 && Math.abs(this.y - tile.getY()) == 1 &&
+            } else if(Math.abs(this.getX() - tile.getX()) == 1 && Math.abs(this.getY() - tile.getY()) == 1 &&
                     tiles[tile.getX()][tile.getY()].isOccupied() && tile.getPiece().isWhite() != tiles[tile.getX()][tile.getY()].getPiece().isWhite()) {
                 return true;
             }
         } else {
-            if(this.x == tile.getX() && Math.abs(this.y - tile.getY()) == 1) {
+            if(this.getX() == tile.getX() && Math.abs(this.getY() - tile.getY()) == 1) {
                 return true;
-            } else if(Math.abs(this.x - tile.getX()) == 1 && Math.abs(this.y - tile.getY()) == 1 &&
+            } else if(Math.abs(this.getX() - tile.getX()) == 1 && Math.abs(this.getY() - tile.getY()) == 1 &&
                     tiles[tile.getX()][tile.getY()].isOccupied() && tile.getPiece().isWhite() != tiles[tile.getX()][tile.getY()].getPiece().isWhite()) {
                 return true;
             }

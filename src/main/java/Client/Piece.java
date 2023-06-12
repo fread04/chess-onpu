@@ -7,8 +7,8 @@ import java.io.Serializable;
 import java.util.LinkedList;
 
 abstract public class Piece {
-    public int x;
-    public int y;
+    private int x;
+    private int y;
     private final boolean isWhite;
     transient private final LinkedList<Piece> pieceList;
     private boolean isPieceSelected = false;
