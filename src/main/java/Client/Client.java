@@ -13,7 +13,7 @@ public class Client {
     private String messageFromServer;
     private BufferedReader reader;
     private Board board;
-    private final int[] parsedString = new int[4];
+    private final int[] parsedString = new int[5];//signature: [0] - oldX, [1] - oldY, [2] - curX, [3] - curY, [4] - move(0 - performMove, 1 - capture);
 
 
     Client(String host, int port) throws IOException{
@@ -48,7 +48,11 @@ public class Client {
                 messageFromServer = reader.readLine();
                 System.out.println("[SERVER]: " + messageFromServer);
                 parseString();
-                board.performMove(parsedString[0], parsedString[1], parsedString[2], parsedString[3]);
+                if(parsedString[4] == 0) {
+                    board.performMove(parsedString[0], parsedString[1], parsedString[2], parsedString[3]);
+                } else if(parsedString[4] == 1) {
+                    board.capture(parsedString[0], parsedString[1], parsedString[2], parsedString[3]);
+                }
             } catch (IOException e) {
                 closeClient();
             }

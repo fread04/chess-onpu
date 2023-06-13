@@ -32,9 +32,9 @@ public class Menu {
             @Override
             public void addButtons() {
 
-                JButton playButton = new Button("Play", 100, 70, 100, 30, this.getPanel()).getButton();
-                JButton onlineButton = new Button("Online", 100, 110, 100, 30, this.getPanel()).getButton();
-                JButton exitButton = new Button("Exit", 100, 150, 100, 30, this.getPanel()).getButton();
+                JButton playButton = new Button("Play", 216, 70, 100, 30, this.getPanel()).getButton();
+                JButton onlineButton = new Button("Online", 216, 110, 100, 30, this.getPanel()).getButton();
+                JButton exitButton = new Button("Exit", 216, 150, 100, 30, this.getPanel()).getButton();
 
                 playButton.addActionListener(e -> {
                     frame.setVisible(false);
@@ -59,9 +59,9 @@ public class Menu {
         JPanel hostPanel = new Panel(frame, 0, 0, 532, 552) {
             @Override
             public void addButtons() {
-                JButton hostButton = new Button("Host", 100, 70, 100, 30, this.getPanel()).getButton();
-                JButton connectButton = new Button("Connect", 100, 110, 100, 30, this.getPanel()).getButton();
-                JButton backButton = new Button("Back", 100, 150, 100, 30, this.getPanel()).getButton();
+                JButton hostButton = new Button("Host", 216, 70, 100, 30, this.getPanel()).getButton();
+                JButton connectButton = new Button("Connect", 216, 110, 100, 30, this.getPanel()).getButton();
+                JButton backButton = new Button("Back", 216, 150, 100, 30, this.getPanel()).getButton();
 
                 hostButton.addActionListener(e -> {// click to host game
                     removeAllPanels();
@@ -78,16 +78,17 @@ public class Menu {
 
                 connectButton.addActionListener(e -> {// click to connect to existing game
                     removeAllPanels();
-                    frame.setVisible(false);
-
-                    try {
-                        client = new Client("localhost", PORT);
-                        System.out.println(client);
-                    } catch (IOException ex) {
-                        ex.printStackTrace();
-                        exit();
-                    }
-                    new Game(frame, client);
+                    createConnectToGamePanel();
+//                    frame.setVisible(false);
+//
+//                    try {
+//                        client = new Client("localhost", PORT);
+//                        System.out.println(client);
+//                    } catch (IOException ex) {
+//                        ex.printStackTrace();
+//                        exit();
+//                    }
+//                    new Game(frame, client);
                 });
 
                 backButton.addActionListener(e -> {
@@ -100,20 +101,53 @@ public class Menu {
     }
 
     //#
-    private void createHostPanel() {
-        JPanel hostPanel = new Panel(frame, 0, 0, 532, 552) {
+//    private void createHostPanel() {
+//        JPanel hostPanel = new Panel(frame, 0, 0, 532, 552) {
+//            @Override
+//            public void addButtons() {
+//                JButton createGameButton = new Button("Create game", 100, 70, 100, 30, this.getPanel()).getButton();
+//                JButton backButton = new Button("Back", 266, 150, 100, 30, this.getPanel()).getButton();
+//
+//                createGameButton.addActionListener(e -> {
+//                    //TODO: create new panel attached to this button
+//                });
+//
+//                backButton.addActionListener(e -> {
+//                    removeAllPanels();
+//                    createMenuPanel();
+//                });
+//            }
+//        }.getPanel();
+//    }
+
+    private void createConnectToGamePanel() {
+        JPanel panel = new Panel(frame, 0, 0, 532, 552) {
             @Override
             public void addButtons() {
-                JButton createGameButton = new Button("Create game", 100, 70, 100, 30, this.getPanel()).getButton();
-                JButton backButton = new Button("Back", 100, 150, 100, 30, this.getPanel()).getButton();
+                JTextField ipField = new JTextField();
+                JButton connectButton = new Button("Connect", 216, 110, 100, 30, this.getPanel()).getButton();
+                JButton backButton = new Button("Back", 216, 150, 100, 30, this.getPanel()).getButton();
 
-                createGameButton.addActionListener(e -> {
-                    //TODO: create new panel attached to this button
+                ipField.setBounds(201, 50, 130, 40);
+                frame.add(ipField);
+
+                connectButton.addActionListener(e -> {
+                    removeAllPanels();
+                    frame.setVisible(false);
+
+                    try {
+                        String hostIp = ipField.getText();
+                        System.out.println(hostIp);
+                        client = new Client(hostIp, PORT);
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+                    new Game(frame, client);
                 });
 
                 backButton.addActionListener(e -> {
                     removeAllPanels();
-                    createMenuPanel();
+                    createOnlinePanel();
                 });
             }
         }.getPanel();

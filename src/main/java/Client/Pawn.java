@@ -8,7 +8,7 @@ class Pawn extends Piece {
     }
     boolean isPawnMoved = false;
     @Override
-    public boolean moveValidator(Tile tile, Tile[][] tiles) {//REDO
+    public boolean moveValidator(Tile tile, Tile[][] tiles) {//TODO: redo
         if (!isPawnMoved) {
             if (this.getX() == tile.getX() && Math.abs(this.getY() - tile.getY()) == 1 || Math.abs(this.getY() - tile.getY()) == 2) {
                 isPawnMoved = true;

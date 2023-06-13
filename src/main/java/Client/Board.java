@@ -205,14 +205,13 @@ public class Board {
                 switch (selectedPiece.getName()) {
                     case "pawn", "knight", "bishop", "rook", "king", "queen" -> {
                         if (selectedPiece.moveValidator(newTile, tiles)) {
-
-                            System.out.println(this.client);
+                            //write signature: writing to server message with this prototype(current position of piece "x, y" + coord of clicked tile "x, y")
                             if(client != null) {
-                                client.write(selectedPiece.getX() + " " + selectedPiece.getY() + " " + (e.getX() - 8) / 64 + " " + (e.getY() - 31) / 64);
+                                client.write(selectedPiece.getX() + " " + selectedPiece.getY() + " " + (e.getX() - 8) / 64 + " " + (e.getY() - 31) / 64 + " 1");
                             }
                             System.out.println(this.server);
                             if(server != null) {
-                                server.getHandler().write(selectedPiece.getX() + " " + selectedPiece.getY() + " " + (e.getX() - 8) / 64 + " " + (e.getY() - 31) / 64);
+                                server.getHandler().write(selectedPiece.getX() + " " + selectedPiece.getY() + " " + (e.getX() - 8) / 64 + " " + (e.getY() - 31) / 64 + " 1");
                             }
 
                             capture(e, newTile);
@@ -233,13 +232,13 @@ public class Board {
                 switch (selectedPiece.getName()) {
                     case "pawn", "knight", "bishop", "rook", "king", "queen" -> {
                         if (selectedPiece.moveValidator(newTile, tiles)) {
-
+                            //write signature: writing to server message with this prototype(current position of piece "x, y" + coord of clicked tile "x, y")
                             if(client != null) {
-                                client.write(selectedPiece.getX() + " " + selectedPiece.getY() + " " + (e.getX() - 8) / 64 + " " + (e.getY() - 31) / 64);
+                                client.write(selectedPiece.getX() + " " + selectedPiece.getY() + " " + (e.getX() - 8) / 64 + " " + (e.getY() - 31) / 64 + " 0");
                             }
 
                             if(server != null) {
-                                server.getHandler().write(selectedPiece.getX() + " " + selectedPiece.getY() + " " + ((e.getX() - 8) / 64) + " " + ((e.getY() - 31) / 64));
+                                server.getHandler().write(selectedPiece.getX() + " " + selectedPiece.getY() + " " + ((e.getX() - 8) / 64) + " " + ((e.getY() - 31) / 64) + " 0");
                             }
 
                             performMove(e, newTile);
@@ -272,19 +271,14 @@ public class Board {
 
     public void performMove(int oldX, int oldY, int curX, int curY) {
 
-
         selectedPiece = tiles[oldY][oldX].getPiece();
+        selectedPiece.move(curX, curY);
 
         tiles[curY][curX].setPiece(selectedPiece);
         tiles[curY][curX].addLabelToPanel(new JLabel(selectedPiece.getImgIcon()));
         tiles[curY][curX].setOccupied(true);
 
         //removing from old tile
-
-//        tiles[oldX][oldY].setOccupied(false);
-//        tiles[oldX][oldY].removeLabelFromPanel(oldTile.getPanel());
-//        tiles[oldX][oldY].setPiece(null);
-
         tiles[oldY][oldX].setOccupied(false);
         tiles[oldY][oldX].removeLabelFromPanel(tiles[oldY][oldX].getPanel());
         tiles[oldY][oldX].setPiece(null);
@@ -310,6 +304,24 @@ public class Board {
         oldTile.setOccupied(false);
 
         //setting variable to null for future work
+        selectedPiece = null;
+    }
+
+    public void capture(int oldX, int oldY, int curX, int curY) {
+        pieceList.remove(tiles[curY][curX].getPiece());
+
+        selectedPiece = tiles[oldY][oldX].getPiece();
+
+        tiles[curY][curX].removeLabelFromPanel(tiles[curY][curX].getPanel());
+        tiles[curY][curX].setPiece(null);
+
+        tiles[curY][curX].setPiece(selectedPiece);
+        tiles[curY][curX].addLabelToPanel(new JLabel(selectedPiece.getImgIcon()));
+
+        tiles[oldY][oldX].removeLabelFromPanel(tiles[oldY][oldX].getPanel());
+        tiles[oldY][oldX].setPiece(null);
+        tiles[oldY][oldX].setOccupied(false);
+
         selectedPiece = null;
     }
 

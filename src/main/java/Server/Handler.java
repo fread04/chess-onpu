@@ -1,6 +1,7 @@
 package Server;
 
 import Client.Board;
+import Client.Piece;
 
 import java.io.*;
 import java.net.Socket;
@@ -11,7 +12,7 @@ public class Handler {
     private BufferedReader reader;
     private String messageFromClient;
     private Board board;
-    private final int[] parsedString = new int[4];
+    private final int[] parsedString = new int[5];//signature: [0] - oldX, [1] - oldY, [2] - curX, [3] - curY, [4] - move(0 - performMove, 1 - capture);
 
 
     Handler(Socket socket, Board board) {
@@ -47,7 +48,11 @@ public class Handler {
                 messageFromClient = reader.readLine();
                 System.out.println("[Client]: " + messageFromClient);
                 parseString();
-                board.performMove(parsedString[0], parsedString[1], parsedString[2], parsedString[3]);
+                if(parsedString[4] == 0) {
+                    board.performMove(parsedString[0], parsedString[1], parsedString[2], parsedString[3]);
+                } else if(parsedString[4] == 1) {
+                    board.capture(parsedString[0], parsedString[1], parsedString[2], parsedString[3]);
+                }
             } catch (IOException e) {
                 closeSocket(socket, writer, reader);
                 break;
