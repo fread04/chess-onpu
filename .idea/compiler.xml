@@ -7,7 +7,6 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="chess-onpu-maven" />
-        <module name="chess-onpu" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>

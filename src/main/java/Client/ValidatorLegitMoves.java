@@ -2,6 +2,7 @@ package Client;
 
 import javax.swing.*;
 import java.util.Arrays;
+import java.util.Objects;
 
 public class ValidatorLegitMoves {
     private final Tile[][] tiles;
@@ -20,7 +21,13 @@ public class ValidatorLegitMoves {
                 if (this.selectedPiece.moveValidator(tiles[i][j], tiles) && !tiles[i][j].isOccupied()) {
                     tilesWithMoves[i][j] = tiles[i][j];//remembering tiles where we placed moves;
                     addLegitMovesToPanel(tiles[i][j]);
-                } else if(this.selectedPiece.moveValidator(tiles[i][j], tiles) && tiles[i][j].isOccupied()
+                } else if(!Objects.equals(this.selectedPiece.getName(), "pawn")
+                        && this.selectedPiece.moveValidator(tiles[i][j], tiles) && tiles[i][j].isOccupied()
+                        && this.selectedPiece.isWhite() != tiles[i][j].getPiece().isWhite()) {
+                    tilesWithMoves[i][j] = tiles[i][j];//remembering tiles where we placed moves;
+                    addLegitMovesToPanel(tiles[i][j]);
+                } else if(Objects.equals(this.selectedPiece.getName(), "pawn")
+                        && this.selectedPiece.captureValidator(tiles[i][j], tiles) && tiles[i][j].isOccupied()
                         && this.selectedPiece.isWhite() != tiles[i][j].getPiece().isWhite()) {
                     tilesWithMoves[i][j] = tiles[i][j];//remembering tiles where we placed moves;
                     addLegitMovesToPanel(tiles[i][j]);
