@@ -11,61 +11,24 @@ class Bishop extends Piece {
     @Override
     public boolean moveValidator(Tile tile, Tile[][] tiles) {
         int[] vector = new int[]{tile.getX() - this.getX(), tile.getY() - this.getY()};
-        if( Math.abs(vector[0]) == Math.abs(vector[1]) ) {
-            if (this.getX() < tile.getX() && this.getY() < tile.getY()) {//right bottom
-                int n = 0;
-                for (int i = this.getX() + 1; i < tile.getX(); i++) {// x coordinate
-                    for (int j = this.getY() + 1; j < tile.getY(); j += n) {//y coordinate
-                        if ((vector[0] / (i - this.getX())) == (vector[1] / (j - this.getY()))) {
-                            if (tiles[j][i].isOccupied()) {
-                                return false;
-                            }
-                        }
-                        n++;
-                    }
+        if (Math.abs(vector[0]) == Math.abs(vector[1])) {
+            int startX = this.getX();
+            int startY = this.getY();
+            int stepX = Integer.compare(vector[0], 0);
+            int stepY = Integer.compare(vector[1], 0);
+
+            for (int i = 1; i < Math.abs(vector[0]); i++) {
+                int nextX = startX + i * stepX;
+                int nextY = startY + i * stepY;
+
+                if (tiles[nextY][nextX].isOccupied()) {
+                    return false;
                 }
-                return (vector[0] / (tile.getX() - this.getX())) == (vector[1] / (tile.getY() - this.getY()));
-            } else if (this.getX() > tile.getX() && this.getY() > tile.getY()) {//left top
-                int n = 0;
-                for (int i = this.getX() - 1; i >= tile.getX(); i--) {// x coordinate
-                    for (int j = this.getY() - 1; j >= tile.getY(); j -= n) {//y coordinate
-                        if ((vector[0] / (i - this.getX())) == (vector[1] / (j - this.getY()))) {
-                            if (tiles[j][i].isOccupied()) {
-                                return false;
-                            }
-                        }
-                        n++;
-                    }
-                }
-                return (vector[0] / (tile.getX() - this.getX())) == (vector[1] / (tile.getY() - this.getY()));
-            } else if (this.getX() < tile.getX() && this.getY() > tile.getY()) {//right top
-                int n = 0;
-                for (int i = this.getX() + 1; i < tile.getX(); i++) {// x coordinate
-                    for (int j = this.getY() - 1; j >= tile.getY(); j -= n) {//y coordinate
-                        if ((vector[0] / (i - this.getX())) == (vector[1] / (j - this.getY()))) {
-                            if (tiles[j][i].isOccupied()) {
-                                return false;
-                            }
-                        }
-                        n++;
-                    }
-                }
-                return (vector[0] / (tile.getX() - this.getX())) == (vector[1] / (tile.getY() - this.getY()));
-            } else if (this.getX() > tile.getX() && this.getY() < tile.getY()) {//left bottom
-                int n = 0;
-                for (int i = this.getX() - 1; i >= tile.getX(); i--) {//x coordinate
-                    for (int j = this.getY() + 1; j < tile.getY(); j += n) {//y coordinate
-                        if ((vector[0] / (i - this.getX())) == (vector[1] / (j - this.getY()))) {
-                            if (tiles[j][i].isOccupied()) {
-                                return false;
-                            }
-                        }
-                        n++;
-                    }
-                }
-                return (vector[0] / (tile.getX() - this.getX())) == (vector[1] / (tile.getY() - this.getY()));
             }
+
+            return true;
         }
+
         return false;
     }
 }

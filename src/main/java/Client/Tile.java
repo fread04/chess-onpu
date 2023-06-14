@@ -22,7 +22,7 @@ public class Tile {
         JPanel newPanel = new JPanel();
         newPanel.setLayout(new BorderLayout());
         newPanel.setBounds(x * 64, y * 64, 64, 64);
-        if((x + y) % 2 == 1) {
+        if ((x + y) % 2 == 1) {
             newPanel.setBackground(new Color(42, 47, 54));
         } else {
             newPanel.setBackground(new Color(106, 119, 135));
@@ -35,9 +35,17 @@ public class Tile {
 //        System.out.println(label);
     }
 
-    public void removeLabelFromPanel(JPanel panel) {
-        if(panel.getComponent(0) != null) {
+    public void removeZeroLabelFromPanel(JPanel panel) {
+        if (panel.getComponent(0) != null) {
             panel.remove(panel.getComponent(0));
+            panel.revalidate();
+            panel.repaint();
+        }
+    }
+
+    public void removeFirstLabelFromPanel(JPanel panel) {
+        if (panel.getComponent(1) != null) {
+            panel.remove(panel.getComponent(1));
             panel.revalidate();
             panel.repaint();
         }

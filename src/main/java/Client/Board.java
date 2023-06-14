@@ -1,36 +1,33 @@
 package Client;
 
 import Server.Server;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 import javax.swing.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.Objects;
 
 public class Board {
     private final JFrame frame = new JFrame();
     private final Tile[][] tiles = new Tile[8][8];
+    private ValidatorLegitMoves validatorLegitMoves;
     private JFrame mainFrame;
     private Client client;
     private Server server;
     public LinkedList<Piece> pieceList = new LinkedList<>();
     private Piece selectedPiece;
-    GsonBuilder builder = new GsonBuilder();
-    Gson gson = builder.setPrettyPrinting().create();
     private Tile oldTile;
 
 
     public Board(JFrame mainFrame, Client client) {
         this.mainFrame = mainFrame;
         this.client = client;
-//        this.client.initBoard(this);
 
         initFrame();
         drawBoard();
+        initValidatorLegitMoves();
         moveableBoard();
         frame.setVisible(true);
     }
@@ -38,10 +35,10 @@ public class Board {
     public Board(JFrame mainFrame, Server server) {
         this.mainFrame = mainFrame;
         this.server = server;
-//        this.server.initBoard(this);
 
         initFrame();
         drawBoard();
+        initValidatorLegitMoves();
         moveableBoard();
         frame.setVisible(true);
     }
@@ -49,12 +46,13 @@ public class Board {
     public Board() {
         initFrame();
         drawBoard();
+        initValidatorLegitMoves();
         moveableBoard();
         frame.setVisible(true);
     }
 
     private void initFrame() {
-        frame.setBounds(700, 200,  526, 548);
+        frame.setBounds(700, 200, 526, 548);
         frame.setTitle("Chess Client.Game");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setResizable(false);
@@ -62,7 +60,7 @@ public class Board {
     }
 
     private void drawBoard() {
-        for(int i = 0; i < tiles.length; i++) { //y coord
+        for (int i = 0; i < tiles.length; i++) { //y coord
             for (int j = 0; j < tiles.length; j++) {// x coord
                 tiles[j][i] = new Tile(i, j, false);
             }
@@ -70,22 +68,26 @@ public class Board {
 
         drawPieces();
 
-        for(int i = 0; i < tiles.length; i++) {
+        for (int i = 0; i < tiles.length; i++) {
             for (int j = 0; j < tiles.length; j++) {
                 frame.add(tiles[i][j].getPanel());
             }
         }
     }
 
+    private void initValidatorLegitMoves() {
+        validatorLegitMoves = new ValidatorLegitMoves(tiles);
+    }
+
     private void drawPieces() {
-        Rook rookBlackLeft          = new   Rook(0, 0, false, pieceList, "rook", "src/main/img/b_rook_png_128px.png");
-        Knight knightBlackLeft      = new Knight(1, 0, false, pieceList, "knight", "src/main/img/b_knight_png_128px.png");
-        Bishop bishopBlackLeft      = new Bishop(2, 0, false, pieceList, "bishop", "src/main/img/b_bishop_png_128px.png");
-        Queen queenBlack            = new  Queen(3, 0, false, pieceList, "queen", "src/main/img/b_queen_png_128px.png");
-        King kingBlack              = new   King(4, 0, false, pieceList, "king", "src/main/img/b_king_png_128px.png");
-        Bishop bishopBlackRight     = new Bishop(5, 0, false, pieceList, "bishop", "src/main/img/b_bishop_png_128px.png");
-        Knight knightBlackRight     = new Knight(6, 0, false, pieceList, "knight", "src/main/img/b_knight_png_128px.png");
-        Rook rookBlackRight         = new   Rook(7, 0, false, pieceList, "rook", "src/main/img/b_rook_png_128px.png");
+        Rook rookBlackLeft = new Rook(0, 0, false, pieceList, "rook", "src/main/img/b_rook_png_128px.png");
+        Knight knightBlackLeft = new Knight(1, 0, false, pieceList, "knight", "src/main/img/b_knight_png_128px.png");
+        Bishop bishopBlackLeft = new Bishop(2, 0, false, pieceList, "bishop", "src/main/img/b_bishop_png_128px.png");
+        Queen queenBlack = new Queen(3, 0, false, pieceList, "queen", "src/main/img/b_queen_png_128px.png");
+        King kingBlack = new King(4, 0, false, pieceList, "king", "src/main/img/b_king_png_128px.png");
+        Bishop bishopBlackRight = new Bishop(5, 0, false, pieceList, "bishop", "src/main/img/b_bishop_png_128px.png");
+        Knight knightBlackRight = new Knight(6, 0, false, pieceList, "knight", "src/main/img/b_knight_png_128px.png");
+        Rook rookBlackRight = new Rook(7, 0, false, pieceList, "rook", "src/main/img/b_rook_png_128px.png");
 
         Pawn pawnBlackA = new Pawn(0, 1, false, pieceList, "pawn", "src/main/img/b_pawn_png_128px.png");
         Pawn pawnBlackC = new Pawn(1, 1, false, pieceList, "pawn", "src/main/img/b_pawn_png_128px.png");
@@ -105,19 +107,19 @@ public class Board {
         Pawn pawnWhiteG = new Pawn(6, 6, true, pieceList, "pawn", "src/main/img/w_pawn_png_128px.png");
         Pawn pawnWhiteH = new Pawn(7, 6, true, pieceList, "pawn", "src/main/img/w_pawn_png_128px.png");
 
-        Rook rookWhiteLeft          = new   Rook(0, 7, true, pieceList, "rook", "src/main/img/w_rook_png_128px.png");
-        Knight knightWhiteLeft      = new Knight(1, 7, true, pieceList, "knight", "src/main/img/w_knight_png_128px.png");
-        Bishop bishopWhiteLeft      = new Bishop(2, 7, true, pieceList, "bishop", "src/main/img/w_bishop_png_128px.png");
-        Queen queenWhite            = new  Queen(3, 7, true, pieceList, "queen", "src/main/img/w_queen_png_128px.png");
-        King kingWhite              = new   King(4, 7, true, pieceList, "king", "src/main/img/w_king_png_128px.png");
-        Bishop bishopWhiteRight     = new Bishop(5, 7, true, pieceList, "bishop", "src/main/img/w_bishop_png_128px.png");
-        Knight knightWhiteRight     = new Knight(6, 7, true, pieceList, "knight", "src/main/img/w_knight_png_128px.png");
-        Rook rookWhiteRight         = new   Rook(7, 7, true, pieceList, "rook", "src/main/img/w_rook_png_128px.png");
+        Rook rookWhiteLeft = new Rook(0, 7, true, pieceList, "rook", "src/main/img/w_rook_png_128px.png");
+        Knight knightWhiteLeft = new Knight(1, 7, true, pieceList, "knight", "src/main/img/w_knight_png_128px.png");
+        Bishop bishopWhiteLeft = new Bishop(2, 7, true, pieceList, "bishop", "src/main/img/w_bishop_png_128px.png");
+        Queen queenWhite = new Queen(3, 7, true, pieceList, "queen", "src/main/img/w_queen_png_128px.png");
+        King kingWhite = new King(4, 7, true, pieceList, "king", "src/main/img/w_king_png_128px.png");
+        Bishop bishopWhiteRight = new Bishop(5, 7, true, pieceList, "bishop", "src/main/img/w_bishop_png_128px.png");
+        Knight knightWhiteRight = new Knight(6, 7, true, pieceList, "knight", "src/main/img/w_knight_png_128px.png");
+        Rook rookWhiteRight = new Rook(7, 7, true, pieceList, "rook", "src/main/img/w_rook_png_128px.png");
 
 
-        for(int i = 0, index = 0; i < tiles.length; i++) {//adding pieces to their tiles
-            for(int j = 0; j < tiles.length; j++) {
-                if(pieceList.get(index).getY() == i && pieceList.get(index).getX() == j) {
+        for (int i = 0, index = 0; i < tiles.length; i++) {//adding pieces to their tiles
+            for (int j = 0; j < tiles.length; j++) {
+                if (pieceList.get(index).getY() == i && pieceList.get(index).getX() == j) {
                     tiles[i][j].setPiece(pieceList.get(index));
                     tiles[i][j].addLabelToPanel(new JLabel(pieceList.get(index).getImgIcon()));
                     tiles[i][j].setOccupied(true);
@@ -175,15 +177,11 @@ public class Board {
     }
 
     private Piece getPiece(int x, int y) {
-        for(Piece p : pieceList) {
-            if(p.getX() == x && p.getY() == y) {
+        for (Piece p : pieceList) {
+            if (p.getX() == x && p.getY() == y) {
                 return p;
             }
         }
-        return null;
-    }
-
-    private Piece getPiece() {
         return null;
     }
 
@@ -199,24 +197,27 @@ public class Board {
     }
 
     private void makeMove(MouseEvent e) throws Exception {
-        if(getTile(((e.getX() - 8) / 64), ((e.getY() - 31) / 64)).isOccupied()) {// take a piece if there is no piece
-            if(selectedPiece != null && getTile(((e.getX() - 8) / 64), ((e.getY() - 31) / 64)).getPiece().isWhite() != selectedPiece.isWhite()) {
+        if (getTile(((e.getX() - 8) / 64), ((e.getY() - 31) / 64)).isOccupied()) {// take a piece if there is no piece
+            if (selectedPiece != null && getTile(((e.getX() - 8) / 64), ((e.getY() - 31) / 64)).getPiece().isWhite() != selectedPiece.isWhite()) {
                 Tile newTile = getTile(((e.getX() - 8) / 64), ((e.getY() - 31) / 64));//get tile where to move piece
                 switch (selectedPiece.getName()) {
                     case "pawn", "knight", "bishop", "rook", "king", "queen" -> {
-                        if (selectedPiece.moveValidator(newTile, tiles)) {
+                        if ((Objects.equals(selectedPiece.getName(), "pawn") && selectedPiece.captureValidator(newTile, tiles))
+                        || (!Objects.equals(selectedPiece.getName(), "pawn") && selectedPiece.moveValidator(newTile, tiles))) {
                             //write signature: writing to server message with this prototype(current position of piece "x, y" + coord of clicked tile "x, y")
-                            if(client != null) {
+                            if (client != null) {
                                 client.write(selectedPiece.getX() + " " + selectedPiece.getY() + " " + (e.getX() - 8) / 64 + " " + (e.getY() - 31) / 64 + " 1");
                             }
                             System.out.println(this.server);
-                            if(server != null) {
+                            if (server != null) {
                                 server.getHandler().write(selectedPiece.getX() + " " + selectedPiece.getY() + " " + (e.getX() - 8) / 64 + " " + (e.getY() - 31) / 64 + " 1");
                             }
 
+                            validatorLegitMoves.removeLegitMovesFromPanel(tiles);
                             capture(e, newTile);
                         } else {
-                            throw new IllegalAccessException("move isn't valid");
+                            validatorLegitMoves.removeLegitMovesFromPanel(tiles);
+                            throw new IllegalAccessException("move to capture isn't valid");
                         }
                     }
                     default -> System.out.println("something got wrong");
@@ -224,25 +225,27 @@ public class Board {
             } else {
                 selectedPiece = getPiece(((e.getX() - 8) / 64), ((e.getY() - 31) / 64));
                 oldTile = getTile(((e.getX() - 8) / 64), ((e.getY() - 31) / 64));
+                validatorLegitMoves.validateLegitMoves(selectedPiece);
             }
 
-        } else if(!getTile(((e.getX() - 8) / 64), ((e.getY() - 31) / 64)).isOccupied()) {// if there isn't a piece then move it according to the rules
-            if(selectedPiece != null) {
+        } else if (!getTile(((e.getX() - 8) / 64), ((e.getY() - 31) / 64)).isOccupied()) {// if there isn't a piece then move it according to the rules
+            if (selectedPiece != null) {
                 Tile newTile = getTile(((e.getX() - 8) / 64), ((e.getY() - 31) / 64));//get tile where to move piece
                 switch (selectedPiece.getName()) {
                     case "pawn", "knight", "bishop", "rook", "king", "queen" -> {
                         if (selectedPiece.moveValidator(newTile, tiles)) {
                             //write signature: writing to server message with this prototype(current position of piece "x, y" + coord of clicked tile "x, y")
-                            if(client != null) {
+                            if (client != null) {
                                 client.write(selectedPiece.getX() + " " + selectedPiece.getY() + " " + (e.getX() - 8) / 64 + " " + (e.getY() - 31) / 64 + " 0");
                             }
 
-                            if(server != null) {
+                            if (server != null) {
                                 server.getHandler().write(selectedPiece.getX() + " " + selectedPiece.getY() + " " + ((e.getX() - 8) / 64) + " " + ((e.getY() - 31) / 64) + " 0");
                             }
-
+                            validatorLegitMoves.removeLegitMovesFromPanel(tiles);
                             performMove(e, newTile);
                         } else {
+                            validatorLegitMoves.removeLegitMovesFromPanel(tiles);
                             throw new IllegalAccessException(selectedPiece.getName() + "'s move isn't valid");
                         }
                     }
@@ -255,6 +258,10 @@ public class Board {
     private void performMove(MouseEvent e, Tile tile) {
         selectedPiece.move(((e.getX() - 8) / 64), ((e.getY() - 31) / 64));
 
+        if(Objects.equals(selectedPiece.getName(), "pawn")) {
+            selectedPiece.setPawnMoved();
+        }
+
         //setting piece to new tile
         tile.setPiece(selectedPiece);
         tile.addLabelToPanel(new JLabel(selectedPiece.getImgIcon()));
@@ -262,7 +269,7 @@ public class Board {
 
         //removing from old tile
         oldTile.setOccupied(false);
-        oldTile.removeLabelFromPanel(oldTile.getPanel());
+        oldTile.removeZeroLabelFromPanel(oldTile.getPanel());
         oldTile.setPiece(null);
 
         //setting variable to null for future work
@@ -280,7 +287,7 @@ public class Board {
 
         //removing from old tile
         tiles[oldY][oldX].setOccupied(false);
-        tiles[oldY][oldX].removeLabelFromPanel(tiles[oldY][oldX].getPanel());
+        tiles[oldY][oldX].removeZeroLabelFromPanel(tiles[oldY][oldX].getPanel());
         tiles[oldY][oldX].setPiece(null);
 
         //setting variable to null for future work
@@ -291,7 +298,7 @@ public class Board {
         pieceList.remove(tile.getPiece());
         selectedPiece.move(((e.getX() - 8) / 64), ((e.getY() - 31) / 64));
         //deleting if there is a piece from new tile
-        tile.removeLabelFromPanel(tile.getPanel());
+        tile.removeZeroLabelFromPanel(tile.getPanel());
         tile.setPiece(null);
 
         //setting new tile
@@ -299,7 +306,7 @@ public class Board {
         tile.addLabelToPanel(new JLabel(selectedPiece.getImgIcon()));
 
         //removing from old tile
-        oldTile.removeLabelFromPanel(oldTile.getPanel());
+        oldTile.removeZeroLabelFromPanel(oldTile.getPanel());
         oldTile.setPiece(null);
         oldTile.setOccupied(false);
 
@@ -312,26 +319,20 @@ public class Board {
 
         selectedPiece = tiles[oldY][oldX].getPiece();
 
-        tiles[curY][curX].removeLabelFromPanel(tiles[curY][curX].getPanel());
+        tiles[curY][curX].removeZeroLabelFromPanel(tiles[curY][curX].getPanel());
         tiles[curY][curX].setPiece(null);
 
         tiles[curY][curX].setPiece(selectedPiece);
         tiles[curY][curX].addLabelToPanel(new JLabel(selectedPiece.getImgIcon()));
 
-        tiles[oldY][oldX].removeLabelFromPanel(tiles[oldY][oldX].getPanel());
+        tiles[oldY][oldX].removeZeroLabelFromPanel(tiles[oldY][oldX].getPanel());
         tiles[oldY][oldX].setPiece(null);
         tiles[oldY][oldX].setOccupied(false);
 
         selectedPiece = null;
     }
 
-
-
     public JFrame getFrame() {
         return frame;
-    }
-
-    public Tile[][] getTiles() {
-        return tiles;
     }
 }

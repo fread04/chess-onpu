@@ -2,16 +2,12 @@ package Client;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.Serial;
-import java.io.Serializable;
 import java.util.LinkedList;
 
 abstract public class Piece {
     private int x;
     private int y;
     private final boolean isWhite;
-    transient private final LinkedList<Piece> pieceList;
-    private boolean isPieceSelected = false;
     private final String name;
     private final String path;
 
@@ -19,7 +15,6 @@ abstract public class Piece {
         this.x = x;
         this.y = y;
         this.isWhite = isWhite;
-        this.pieceList = pieceList;
         this.name = name;
         this.path = path;
         pieceList.add(this);
@@ -39,20 +34,12 @@ abstract public class Piece {
 
     public abstract boolean moveValidator(Tile tile, Tile[][] tiles);
 
-    public void selectPiece() {
-        isPieceSelected = true;
-    }
-
     public int getX() {
         return this.x;
     }
 
     public int getY() {
         return this.y;
-    }
-
-    public int[] getCoordinates() {
-        return new int[]{this.x, this.y};
     }
 
     public String getName() {
@@ -67,6 +54,9 @@ abstract public class Piece {
         return this.isWhite;
     }
 
-    public boolean isPieceSelected() {return this.isPieceSelected;}
+    public boolean captureValidator(Tile tile, Tile[][] tiles) {
+        return false;
+    }
 
+    public void setPawnMoved() {}
 }
