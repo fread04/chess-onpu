@@ -13,17 +13,20 @@ public class Board {
     private final JFrame frame = new JFrame();
     private final Tile[][] tiles = new Tile[8][8];
     private ValidatorLegitMoves validatorLegitMoves;
-    private JFrame mainFrame;
+    private JFrame mainFrame; //to reopen main frame when the game is over
     private Client client;
     private Server server;
     public LinkedList<Piece> pieceList = new LinkedList<>();
     private Piece selectedPiece;
     private Tile oldTile;
+    private boolean CLIENT_COLOR;
+    private boolean SERVER_COLOR;
 
 
     public Board(JFrame mainFrame, Client client) {
         this.mainFrame = mainFrame;
         this.client = client;
+        CLIENT_COLOR = client.getPlayer().getColor();
 
         initFrame();
         drawBoard();
@@ -35,6 +38,7 @@ public class Board {
     public Board(JFrame mainFrame, Server server) {
         this.mainFrame = mainFrame;
         this.server = server;
+        SERVER_COLOR = server.getPlayer().getColor();
 
         initFrame();
         drawBoard();
@@ -179,7 +183,13 @@ public class Board {
     private Piece getPiece(int x, int y) {
         for (Piece p : pieceList) {
             if (p.getX() == x && p.getY() == y) {
-                return p;
+                if (client != null && CLIENT_COLOR == p.isWhite() && client.getPlayer().isActiveTurn()) {
+                    return p;
+                } else if (server != null && SERVER_COLOR == p.isWhite() && server.getPlayer().isActiveTurn()) {
+                    return p;
+                } else if (server == null && client == null) {
+                    return p;
+                }
             }
         }
         return null;
@@ -204,13 +214,15 @@ public class Board {
                     case "pawn", "knight", "bishop", "rook", "king", "queen" -> {
                         if ((Objects.equals(selectedPiece.getName(), "pawn") && selectedPiece.captureValidator(newTile, tiles))
                         || (!Objects.equals(selectedPiece.getName(), "pawn") && selectedPiece.moveValidator(newTile, tiles))) {
-                            //write signature: writing to server message with this prototype(current position of piece "x, y" + coord of clicked tile "x, y")
+                            // write signature: writing to server message with this prototype:
+                            // (current position of piece "x, y" + coordinates of clicked tile "x, y" + move(0 - performMove, 1 - capture))
                             if (client != null) {
                                 client.write(selectedPiece.getX() + " " + selectedPiece.getY() + " " + (e.getX() - 8) / 64 + " " + (e.getY() - 31) / 64 + " 1");
+                                client.getPlayer().switchTurn();
                             }
-                            System.out.println(this.server);
                             if (server != null) {
                                 server.getHandler().write(selectedPiece.getX() + " " + selectedPiece.getY() + " " + (e.getX() - 8) / 64 + " " + (e.getY() - 31) / 64 + " 1");
+                                server.getPlayer().switchTurn();
                             }
 
                             validatorLegitMoves.removeLegitMovesFromPanel(tiles);
@@ -234,13 +246,15 @@ public class Board {
                 switch (selectedPiece.getName()) {
                     case "pawn", "knight", "bishop", "rook", "king", "queen" -> {
                         if (selectedPiece.moveValidator(newTile, tiles)) {
-                            //write signature: writing to server message with this prototype(current position of piece "x, y" + coord of clicked tile "x, y")
+                            // write signature: writing to server message with this prototype:
+                            // (current position of piece "x, y" + coordinates of clicked tile "x, y" + move(0 - performMove, 1 - capture))
                             if (client != null) {
                                 client.write(selectedPiece.getX() + " " + selectedPiece.getY() + " " + (e.getX() - 8) / 64 + " " + (e.getY() - 31) / 64 + " 0");
+                                client.getPlayer().switchTurn();
                             }
-
                             if (server != null) {
-                                server.getHandler().write(selectedPiece.getX() + " " + selectedPiece.getY() + " " + ((e.getX() - 8) / 64) + " " + ((e.getY() - 31) / 64) + " 0");
+                                server.getHandler().write(selectedPiece.getX() + " " + selectedPiece.getY() + " " + (e.getX() - 8) / 64 + " " + (e.getY() - 31) / 64 + " 0");
+                                server.getPlayer().switchTurn();
                             }
                             validatorLegitMoves.removeLegitMovesFromPanel(tiles);
                             performMove(e, newTile);

@@ -2,6 +2,7 @@ package Server;
 
 import Client.Board;
 import Client.Piece;
+import Client.Player;
 
 import java.io.*;
 import java.net.Socket;
@@ -12,13 +13,17 @@ public class Handler {
     private BufferedReader reader;
     private String messageFromClient;
     private Board board;
-    private final int[] parsedString = new int[5];//signature: [0] - oldX, [1] - oldY, [2] - curX, [3] - curY, [4] - move(0 - performMove, 1 - capture);
+    private Player serverPlayer;
+    private final int[] parsedString = new int[5];
+    //signature: [0] - oldX, [1] - oldY, [2] - curX, [3] - curY, [4] - move(0 - performMove, 1 - capture) [5] - sing to switch turn;
 
 
-    Handler(Socket socket, Board board) {
+    Handler(Socket socket, Board board, Player serverPlayer) {
         try {
             this.socket = socket;
             this.board = board;
+            this.serverPlayer = serverPlayer;
+            System.out.println(this.serverPlayer);
             writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
             reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             Thread listener = new Thread(this::listen);
@@ -26,10 +31,6 @@ public class Handler {
         } catch (IOException e) {
             closeSocket(socket, writer, reader);
         }
-    }
-
-    public void initBoard(Board board) {
-        this.board = board;
     }
 
     public void write(String message) {
@@ -50,8 +51,10 @@ public class Handler {
                 parseString();
                 if(parsedString[4] == 0) {
                     board.performMove(parsedString[0], parsedString[1], parsedString[2], parsedString[3]);
+                    serverPlayer.switchTurn();
                 } else if(parsedString[4] == 1) {
                     board.capture(parsedString[0], parsedString[1], parsedString[2], parsedString[3]);
+                    serverPlayer.switchTurn();
                 }
             } catch (IOException e) {
                 closeSocket(socket, writer, reader);
@@ -77,5 +80,4 @@ public class Handler {
             e.printStackTrace();
         }
     }
-
 }

@@ -14,6 +14,7 @@ public class Client {
     private BufferedReader reader;
     private Board board;
     private final int[] parsedString = new int[5];//signature: [0] - oldX, [1] - oldY, [2] - curX, [3] - curY, [4] - move(0 - performMove, 1 - capture);
+    private final Player player = new Player(false);
 
 
     Client(String host, int port) throws IOException{
@@ -50,8 +51,10 @@ public class Client {
                 parseString();
                 if(parsedString[4] == 0) {
                     board.performMove(parsedString[0], parsedString[1], parsedString[2], parsedString[3]);
+                    this.getPlayer().switchTurn();
                 } else if(parsedString[4] == 1) {
                     board.capture(parsedString[0], parsedString[1], parsedString[2], parsedString[3]);
+                    this.getPlayer().switchTurn();
                 }
             } catch (IOException e) {
                 closeClient();
@@ -76,6 +79,10 @@ public class Client {
         }
     }
 
+    private void writeLoseMessage() {
+        board.getFrame();
+    }
+
     public Socket getSocket() {
         return socket;
     }
@@ -86,5 +93,9 @@ public class Client {
 
     public BufferedReader getReader() {
         return reader;
+    }
+
+    public Player getPlayer() {
+        return player;
     }
 }

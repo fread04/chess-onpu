@@ -11,7 +11,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="chess-onpu" target="20" />
+      <module name="chess-onpu" target="19" />
     </bytecodeTargetLevel>
   </component>
 </project>

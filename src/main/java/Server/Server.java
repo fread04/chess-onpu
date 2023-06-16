@@ -1,6 +1,7 @@
 package Server;
 
 import Client.Board;
+import Client.Player;
 
 import java.io.*;
 import java.net.ServerSocket;
@@ -12,9 +13,11 @@ public class Server {
     private final int PORT = 9091;
     private Handler handler;
     private Board board;
+    private final Player player = new Player(true);
 
     public Server() {
         try {
+            System.out.println(this.player);
             serverSocket = new ServerSocket(PORT);
         } catch (IOException e) {
             closeServer();
@@ -27,7 +30,7 @@ public class Server {
             new Thread(() -> {
                 try {
                     this.socket = serverSocket.accept();
-                    this.handler = new Handler(socket, board);
+                    this.handler = new Handler(socket, board, player);
                     System.out.println("[SERVER]: new client connected");
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -56,4 +59,7 @@ public class Server {
         new Server();
     }
 
+    public Player getPlayer() {
+        return player;
+    }
 }

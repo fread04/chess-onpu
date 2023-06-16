@@ -73,22 +73,11 @@ public class Menu {
 
                     frame.setVisible(false);
                     new Game(frame, server);
-
                 });
 
                 connectButton.addActionListener(e -> {// click to connect to existing game
                     removeAllPanels();
                     createConnectToGamePanel();
-//                    frame.setVisible(false);
-//
-//                    try {
-//                        client = new Client("localhost", PORT);
-//                        System.out.println(client);
-//                    } catch (IOException ex) {
-//                        ex.printStackTrace();
-//                        exit();
-//                    }
-//                    new Game(frame, client);
                 });
 
                 backButton.addActionListener(e -> {
