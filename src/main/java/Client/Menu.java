@@ -32,9 +32,9 @@ public class Menu {
             @Override
             public void addButtons() {
 
-                JButton playButton = new Button("Play", 216, 70, 100, 30, this.getPanel()).getButton();
-                JButton onlineButton = new Button("Online", 216, 110, 100, 30, this.getPanel()).getButton();
-                JButton exitButton = new Button("Exit", 216, 150, 100, 30, this.getPanel()).getButton();
+                JButton playButton = new Button("Play", 208, 70, 100, 30, this.getPanel()).getButton();
+                JButton onlineButton = new Button("Online", 208, 110, 100, 30, this.getPanel()).getButton();
+                JButton exitButton = new Button("Exit", 208, 150, 100, 30, this.getPanel()).getButton();
 
                 playButton.addActionListener(e -> {
                     frame.setVisible(false);
@@ -59,9 +59,9 @@ public class Menu {
         JPanel hostPanel = new Panel(frame, 0, 0, 532, 552) {
             @Override
             public void addButtons() {
-                JButton hostButton = new Button("Host", 216, 70, 100, 30, this.getPanel()).getButton();
-                JButton connectButton = new Button("Connect", 216, 110, 100, 30, this.getPanel()).getButton();
-                JButton backButton = new Button("Back", 216, 150, 100, 30, this.getPanel()).getButton();
+                JButton hostButton = new Button("Host", 208, 70, 100, 30, this.getPanel()).getButton();
+                JButton connectButton = new Button("Connect", 208, 110, 100, 30, this.getPanel()).getButton();
+                JButton backButton = new Button("Back", 208, 150, 100, 30, this.getPanel()).getButton();
 
                 hostButton.addActionListener(e -> {// click to host game
                     removeAllPanels();
@@ -114,10 +114,10 @@ public class Menu {
             @Override
             public void addButtons() {
                 JTextField ipField = new JTextField();
-                JButton connectButton = new Button("Connect", 216, 110, 100, 30, this.getPanel()).getButton();
-                JButton backButton = new Button("Back", 216, 150, 100, 30, this.getPanel()).getButton();
+                JButton connectButton = new Button("Connect", 208, 110, 100, 30, this.getPanel()).getButton();
+                JButton backButton = new Button("Back", 208, 150, 100, 30, this.getPanel()).getButton();
 
-                ipField.setBounds(201, 50, 130, 40);
+                ipField.setBounds(193, 50, 130, 40);
                 frame.add(ipField);
 
                 connectButton.addActionListener(e -> {

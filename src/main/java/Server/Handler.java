@@ -6,6 +6,7 @@ import Client.Player;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.Objects;
 
 public class Handler {
     private Socket socket;
@@ -53,6 +54,14 @@ public class Handler {
                     board.performMove(parsedString[0], parsedString[1], parsedString[2], parsedString[3]);
                     serverPlayer.switchTurn();
                 } else if(parsedString[4] == 1) {
+                    if(Objects.equals(board.getPiece(parsedString[2], parsedString[3]).getName(), "king")
+                            && board.getPiece(parsedString[2], parsedString[3]).isWhite()) {
+                        System.out.println("you lost");
+                    }
+                    if(Objects.equals(board.getPiece(parsedString[2], parsedString[3]).getName(), "king")
+                            && !board.getPiece(parsedString[2], parsedString[3]).isWhite()) {
+                        System.out.println("you won");
+                    }
                     board.capture(parsedString[0], parsedString[1], parsedString[2], parsedString[3]);
                     serverPlayer.switchTurn();
                 }

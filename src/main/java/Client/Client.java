@@ -1,11 +1,13 @@
 package Client;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.*;
 import java.lang.ref.Cleaner;
 import java.net.Socket;
+import java.util.Objects;
 
 public class Client {
     private Socket socket;
@@ -53,6 +55,14 @@ public class Client {
                     board.performMove(parsedString[0], parsedString[1], parsedString[2], parsedString[3]);
                     this.getPlayer().switchTurn();
                 } else if(parsedString[4] == 1) {
+                    if(Objects.equals(board.getPiece(parsedString[2], parsedString[3]).getName(), "king")
+                        && !board.getPiece(parsedString[2], parsedString[3]).isWhite()) {
+                        System.out.println("you lost");
+                    }
+                    if(Objects.equals(board.getPiece(parsedString[2], parsedString[3]).getName(), "king")
+                            && board.getPiece(parsedString[2], parsedString[3]).isWhite()) {
+                        System.out.println("you won");
+                    }
                     board.capture(parsedString[0], parsedString[1], parsedString[2], parsedString[3]);
                     this.getPlayer().switchTurn();
                 }
