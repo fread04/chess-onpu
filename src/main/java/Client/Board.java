@@ -176,7 +176,7 @@ public class Board {
         });
     }
 
-    private Piece getPiece(int x, int y) {
+    public Piece getPiece(int x, int y) {
         for (Piece p : pieceList) {
             if (p.getX() == x && p.getY() == y) {
                 return p;
@@ -196,6 +196,23 @@ public class Board {
         return null;
     }
 
+    private boolean isChecked(){
+        Piece tempKingPiece = null;
+        for(Piece piece : pieceList) {
+            if((piece.isWhite() == selectedPiece.isWhite()) && (Objects.equals(piece.getName(), "king"))) {
+                tempKingPiece = piece;
+            }
+        }
+        for(Piece piece : pieceList) {
+            if((piece.isWhite() != tempKingPiece.isWhite()) && ((!Objects.equals(piece.getName(), "pawn")
+                && piece.moveValidator(tiles[tempKingPiece.getX()][tempKingPiece.getY()], tiles))
+                || (Objects.equals(piece.getName(), "pawn")
+                && piece.captureValidator(tiles[tempKingPiece.getX()][tempKingPiece.getY()], tiles)))) {
+                return true;
+            }
+        }
+        return false;
+    }
     private void makeMove(MouseEvent e) throws Exception {
         if (getTile(((e.getX() - 8) / 64), ((e.getY() - 31) / 64)).isOccupied()) {// take a piece if there is no piece
             if (selectedPiece != null && getTile(((e.getX() - 8) / 64), ((e.getY() - 31) / 64)).getPiece().isWhite() != selectedPiece.isWhite()) {
@@ -225,6 +242,9 @@ public class Board {
             } else {
                 selectedPiece = getPiece(((e.getX() - 8) / 64), ((e.getY() - 31) / 64));
                 oldTile = getTile(((e.getX() - 8) / 64), ((e.getY() - 31) / 64));
+                if(isChecked()) {
+                    System.out.println("is check");
+                }
                 validatorLegitMoves.validateLegitMoves(selectedPiece);
             }
 

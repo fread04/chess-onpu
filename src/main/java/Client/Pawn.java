@@ -10,7 +10,7 @@ class Pawn extends Piece {
     }
 
     @Override
-    public boolean moveValidator(Tile tile, Tile[][] tiles) {//TODO: redo
+    public boolean moveValidator(Tile tile, Tile[][] tiles) {
         int[] vector = new int[]{tile.getX() - this.getX(), tile.getY() - this.getY()};
         int isWhite;
         if(super.isWhite()) isWhite = -1;
