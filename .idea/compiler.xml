@@ -9,8 +9,5 @@
         <module name="chess-onpu-maven" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="chess-onpu" target="19" />
-    </bytecodeTargetLevel>
   </component>
 </project>
