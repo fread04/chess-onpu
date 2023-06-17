@@ -1,9 +1,10 @@
 package Client;
 
 import java.util.LinkedList;
-import java.util.Objects;
 
-class King extends Piece{
+class King extends Piece {
+    private boolean isUnderAttack = false;
+    private final CheckMateValidator checkMateValidator = new CheckMateValidator(this);
 
     public King(int x, int y, boolean isWhite, LinkedList<Piece> pieceList, String name, String path) {
         super(x, y, isWhite, pieceList, name, path);
@@ -11,13 +12,25 @@ class King extends Piece{
 
     @Override
     public boolean moveValidator(Tile tile, Tile[][] tiles) {
+        // King can move only one square in any direction
         int[] vector = new int[]{tile.getX() - this.getX(), tile.getY() - this.getY()};
         if (Math.abs(vector[0]) > 1 || Math.abs(vector[1]) > 1) {
-            // Client.King can move only one square in any direction
             return false;
         }
-        // Check for any obstructions on the path of the Client.King (there shouldn't be any)
+        // Check for any obstructions on the path of the King (there shouldn't be any)
         return !tile.isOccupied();
+    }
+
+    public boolean isUnderAttack() {
+        return isUnderAttack;
+    }
+
+    public CheckMateValidator getCheckMateValidator() {
+        return checkMateValidator;
+    }
+
+    public void setUnderAttack() {
+        isUnderAttack = !isUnderAttack;
     }
 }
 

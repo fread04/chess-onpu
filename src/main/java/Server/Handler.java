@@ -1,12 +1,10 @@
 package Server;
 
 import Client.Board;
-import Client.Piece;
 import Client.Player;
 
 import java.io.*;
 import java.net.Socket;
-import java.util.Objects;
 
 public class Handler {
     private Socket socket;
@@ -45,23 +43,15 @@ public class Handler {
     }
 
     private void listen() {
-        while(socket.isConnected()) {
+        while (socket.isConnected()) {
             try {
                 messageFromClient = reader.readLine();
                 System.out.println("[Client]: " + messageFromClient);
                 parseString();
-                if(parsedString[4] == 0) {
+                if (parsedString[4] == 0) {
                     board.performMove(parsedString[0], parsedString[1], parsedString[2], parsedString[3]);
                     serverPlayer.switchTurn();
-                } else if(parsedString[4] == 1) {
-                    if(Objects.equals(board.getPiece(parsedString[2], parsedString[3]).getName(), "king")
-                            && board.getPiece(parsedString[2], parsedString[3]).isWhite()) {
-                        System.out.println("you lost");
-                    }
-                    if(Objects.equals(board.getPiece(parsedString[2], parsedString[3]).getName(), "king")
-                            && !board.getPiece(parsedString[2], parsedString[3]).isWhite()) {
-                        System.out.println("you won");
-                    }
+                } else if (parsedString[4] == 1) {
                     board.capture(parsedString[0], parsedString[1], parsedString[2], parsedString[3]);
                     serverPlayer.switchTurn();
                 }
@@ -74,7 +64,7 @@ public class Handler {
 
     private void parseString() {
         String[] token = messageFromClient.split(" ");
-        for(int i = 0; i < token.length; i++) {
+        for (int i = 0; i < token.length; i++) {
             parsedString[i] = Integer.parseInt(token[i]);
         }
     }

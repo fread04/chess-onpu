@@ -13,33 +13,24 @@ class Pawn extends Piece {
     public boolean moveValidator(Tile tile, Tile[][] tiles) {
         int[] vector = new int[]{tile.getX() - this.getX(), tile.getY() - this.getY()};
         int isWhite;
-        if(super.isWhite()) isWhite = -1;
+        if (this.isWhite()) isWhite = -1;
         else isWhite = 1;
-        if(!isPawnMoved){
-            if((vector[0] == 0) && (vector[1] == isWhite || vector[1] == 2*isWhite)){
-                return true;
-            }
+        if (!isPawnMoved) {
+            return (vector[0] == 0) && (vector[1] == isWhite || vector[1] == 2 * isWhite);
+        } else {
+            return (vector[0] == 0) && vector[1] == isWhite;
         }
-        else{
-            if((vector[0] == 0) && vector[1] == isWhite){
-                return true;
-            }
-        }
-
-        return false;
     }
 
     @Override
     public boolean captureValidator(Tile tile, Tile[][] tiles) {
         int[] vector = new int[]{tile.getX() - this.getX(), tile.getY() - this.getY()};
         int isWhite;
-        if(super.isWhite()) isWhite = -1;
-        else isWhite = 1;
-        if((Math.abs(vector[0]) == 1) && vector[1] == isWhite ){
-            return true;
-        }
 
-        return false;
+        if (this.isWhite()) isWhite = -1;
+        else isWhite = 1;
+
+        return (Math.abs(vector[0]) == 1) && vector[1] == isWhite;
     }
 
     @Override

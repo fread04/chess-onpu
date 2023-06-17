@@ -1,13 +1,7 @@
 package Client;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.io.*;
-import java.lang.ref.Cleaner;
 import java.net.Socket;
-import java.util.Objects;
 
 public class Client {
     private Socket socket;
@@ -19,7 +13,7 @@ public class Client {
     private final Player player = new Player(false);
 
 
-    Client(String host, int port) throws IOException{
+    Client(String host, int port) throws IOException {
         try {
             socket = new Socket(host, port);
             writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
@@ -46,23 +40,15 @@ public class Client {
     }
 
     private void listen() {
-        while(socket.isConnected()) {
+        while (socket.isConnected()) {
             try {
                 messageFromServer = reader.readLine();
                 System.out.println("[SERVER]: " + messageFromServer);
                 parseString();
-                if(parsedString[4] == 0) {
+                if (parsedString[4] == 0) {
                     board.performMove(parsedString[0], parsedString[1], parsedString[2], parsedString[3]);
                     this.getPlayer().switchTurn();
-                } else if(parsedString[4] == 1) {
-                    if(Objects.equals(board.getPiece(parsedString[2], parsedString[3]).getName(), "king")
-                        && !board.getPiece(parsedString[2], parsedString[3]).isWhite()) {
-                        System.out.println("you lost");
-                    }
-                    if(Objects.equals(board.getPiece(parsedString[2], parsedString[3]).getName(), "king")
-                            && board.getPiece(parsedString[2], parsedString[3]).isWhite()) {
-                        System.out.println("you won");
-                    }
+                } else if (parsedString[4] == 1) {
                     board.capture(parsedString[0], parsedString[1], parsedString[2], parsedString[3]);
                     this.getPlayer().switchTurn();
                 }
@@ -74,7 +60,7 @@ public class Client {
 
     private void parseString() {
         String[] token = messageFromServer.split(" ");
-        for(int i = 0; i < token.length; i++) {
+        for (int i = 0; i < token.length; i++) {
             parsedString[i] = Integer.parseInt(token[i]);
         }
     }

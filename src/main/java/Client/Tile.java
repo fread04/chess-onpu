@@ -32,20 +32,12 @@ public class Tile {
 
     public void addLabelToPanel(JLabel label) {
         panel.add(label);
-//        System.out.println(label);
     }
 
-    public void removeZeroLabelFromPanel(JPanel panel) {
-        if (panel.getComponent(0) != null) {
-            panel.remove(panel.getComponent(0));
-            panel.revalidate();
-            panel.repaint();
-        }
-    }
-
-    public void removeFirstLabelFromPanel(JPanel panel) {
-        if (panel.getComponent(1) != null) {
-            panel.remove(panel.getComponent(1));
+    //removing label from panel via it`s index
+    public void removeLabelFromPanel(JPanel panel, int index) {
+        if (panel.getComponent(index) != null) {
+            panel.remove(panel.getComponent(index));
             panel.revalidate();
             panel.repaint();
         }

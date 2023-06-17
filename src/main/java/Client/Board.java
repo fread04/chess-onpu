@@ -21,6 +21,8 @@ public class Board {
     private Tile oldTile;
     private boolean CLIENT_COLOR;
     private boolean SERVER_COLOR;
+    private King BLACK_KING;
+    private King WHITE_KING;
 
 
     public Board(JFrame mainFrame, Client client) {
@@ -79,16 +81,16 @@ public class Board {
         }
     }
 
-    private void initValidatorLegitMoves() {
+    private void initValidatorLegitMoves() {//creating object for validator to draw legit moves
         validatorLegitMoves = new ValidatorLegitMoves(tiles);
     }
 
-    private void drawPieces() {
+    private void drawPieces() {//creating pieces
         Rook rookBlackLeft = new Rook(0, 0, false, pieceList, "rook", "src/main/img/b_rook_png_128px.png");
         Knight knightBlackLeft = new Knight(1, 0, false, pieceList, "knight", "src/main/img/b_knight_png_128px.png");
         Bishop bishopBlackLeft = new Bishop(2, 0, false, pieceList, "bishop", "src/main/img/b_bishop_png_128px.png");
         Queen queenBlack = new Queen(3, 0, false, pieceList, "queen", "src/main/img/b_queen_png_128px.png");
-        King kingBlack = new King(4, 0, false, pieceList, "king", "src/main/img/b_king_png_128px.png");
+        this.BLACK_KING = new King(4, 0, false, pieceList, "king", "src/main/img/b_king_png_128px.png");
         Bishop bishopBlackRight = new Bishop(5, 0, false, pieceList, "bishop", "src/main/img/b_bishop_png_128px.png");
         Knight knightBlackRight = new Knight(6, 0, false, pieceList, "knight", "src/main/img/b_knight_png_128px.png");
         Rook rookBlackRight = new Rook(7, 0, false, pieceList, "rook", "src/main/img/b_rook_png_128px.png");
@@ -115,7 +117,7 @@ public class Board {
         Knight knightWhiteLeft = new Knight(1, 7, true, pieceList, "knight", "src/main/img/w_knight_png_128px.png");
         Bishop bishopWhiteLeft = new Bishop(2, 7, true, pieceList, "bishop", "src/main/img/w_bishop_png_128px.png");
         Queen queenWhite = new Queen(3, 7, true, pieceList, "queen", "src/main/img/w_queen_png_128px.png");
-        King kingWhite = new King(4, 7, true, pieceList, "king", "src/main/img/w_king_png_128px.png");
+        WHITE_KING = new King(4, 7, true, pieceList, "king", "src/main/img/w_king_png_128px.png");
         Bishop bishopWhiteRight = new Bishop(5, 7, true, pieceList, "bishop", "src/main/img/w_bishop_png_128px.png");
         Knight knightWhiteRight = new Knight(6, 7, true, pieceList, "knight", "src/main/img/w_knight_png_128px.png");
         Rook rookWhiteRight = new Rook(7, 7, true, pieceList, "rook", "src/main/img/w_rook_png_128px.png");
@@ -133,13 +135,13 @@ public class Board {
         }
     }
 
-    private void moveableBoard() {
+    private void moveableBoard() {//function to add clicks to board
 
         frame.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 try {
-                    makeMove(e);
+                    makeMove(e);//making move
                 } catch (Exception ex) {
                     selectedPiece = null;
                     throw new RuntimeException(ex);
@@ -206,23 +208,6 @@ public class Board {
         return null;
     }
 
-    private boolean isChecked(){
-        Piece tempKingPiece = null;
-        for(Piece piece : pieceList) {
-            if((piece.isWhite() == selectedPiece.isWhite()) && (Objects.equals(piece.getName(), "king"))) {
-                tempKingPiece = piece;
-            }
-        }
-        for(Piece piece : pieceList) {
-            if((piece.isWhite() != tempKingPiece.isWhite()) && ((!Objects.equals(piece.getName(), "pawn")
-                && piece.moveValidator(tiles[tempKingPiece.getX()][tempKingPiece.getY()], tiles))
-                || (Objects.equals(piece.getName(), "pawn")
-                && piece.captureValidator(tiles[tempKingPiece.getX()][tempKingPiece.getY()], tiles)))) {
-                return true;
-            }
-        }
-        return false;
-    }
     private void makeMove(MouseEvent e) throws Exception {
         if (getTile(((e.getX() - 8) / 64), ((e.getY() - 31) / 64)).isOccupied()) {// take a piece if there is no piece
             if (selectedPiece != null && getTile(((e.getX() - 8) / 64), ((e.getY() - 31) / 64)).getPiece().isWhite() != selectedPiece.isWhite()) {
@@ -230,7 +215,7 @@ public class Board {
                 switch (selectedPiece.getName()) {
                     case "pawn", "knight", "bishop", "rook", "king", "queen" -> {
                         if ((Objects.equals(selectedPiece.getName(), "pawn") && selectedPiece.captureValidator(newTile, tiles))
-                        || (!Objects.equals(selectedPiece.getName(), "pawn") && selectedPiece.moveValidator(newTile, tiles))) {
+                                || (!Objects.equals(selectedPiece.getName(), "pawn") && selectedPiece.moveValidator(newTile, tiles))) {
                             // write signature: writing to server message with this prototype:
                             // (current position of piece "x, y" + coordinates of clicked tile "x, y" + move(0 - performMove, 1 - capture))
                             if (client != null) {
@@ -254,9 +239,6 @@ public class Board {
             } else {
                 selectedPiece = getPiece(((e.getX() - 8) / 64), ((e.getY() - 31) / 64));
                 oldTile = getTile(((e.getX() - 8) / 64), ((e.getY() - 31) / 64));
-                if(isChecked()) {
-                    System.out.println("is check");
-                }
                 validatorLegitMoves.validateLegitMoves(selectedPiece);
             }
 
@@ -276,6 +258,7 @@ public class Board {
                                 server.getHandler().write(selectedPiece.getX() + " " + selectedPiece.getY() + " " + (e.getX() - 8) / 64 + " " + (e.getY() - 31) / 64 + " 0");
                                 server.getPlayer().switchTurn();
                             }
+
                             validatorLegitMoves.removeLegitMovesFromPanel(tiles);
                             performMove(e, newTile);
                         } else {
@@ -289,10 +272,11 @@ public class Board {
         }
     }
 
+    //to use offline
     private void performMove(MouseEvent e, Tile tile) {
         selectedPiece.move(((e.getX() - 8) / 64), ((e.getY() - 31) / 64));
 
-        if(Objects.equals(selectedPiece.getName(), "pawn")) {
+        if (Objects.equals(selectedPiece.getName(), "pawn")) {
             selectedPiece.setPawnMoved();
         }
 
@@ -303,13 +287,14 @@ public class Board {
 
         //removing from old tile
         oldTile.setOccupied(false);
-        oldTile.removeZeroLabelFromPanel(oldTile.getPanel());
+        oldTile.removeLabelFromPanel(oldTile.getPanel(), 0);
         oldTile.setPiece(null);
 
         //setting variable to null for future work
         selectedPiece = null;
     }
 
+    //to use online
     public void performMove(int oldX, int oldY, int curX, int curY) {
 
         selectedPiece = tiles[oldY][oldX].getPiece();
@@ -321,18 +306,19 @@ public class Board {
 
         //removing from old tile
         tiles[oldY][oldX].setOccupied(false);
-        tiles[oldY][oldX].removeZeroLabelFromPanel(tiles[oldY][oldX].getPanel());
+        tiles[oldY][oldX].removeLabelFromPanel(tiles[oldY][oldX].getPanel(), 0);
         tiles[oldY][oldX].setPiece(null);
 
         //setting variable to null for future work
         selectedPiece = null;
     }
 
+    //to use offline
     private void capture(MouseEvent e, Tile tile) {
         pieceList.remove(tile.getPiece());
         selectedPiece.move(((e.getX() - 8) / 64), ((e.getY() - 31) / 64));
         //deleting if there is a piece from new tile
-        tile.removeZeroLabelFromPanel(tile.getPanel());
+        tile.removeLabelFromPanel(tile.getPanel(), 0);
         tile.setPiece(null);
 
         //setting new tile
@@ -340,7 +326,7 @@ public class Board {
         tile.addLabelToPanel(new JLabel(selectedPiece.getImgIcon()));
 
         //removing from old tile
-        oldTile.removeZeroLabelFromPanel(oldTile.getPanel());
+        oldTile.removeLabelFromPanel(oldTile.getPanel(), 0);
         oldTile.setPiece(null);
         oldTile.setOccupied(false);
 
@@ -348,18 +334,19 @@ public class Board {
         selectedPiece = null;
     }
 
+    //to use online
     public void capture(int oldX, int oldY, int curX, int curY) {
         pieceList.remove(tiles[curY][curX].getPiece());
 
         selectedPiece = tiles[oldY][oldX].getPiece();
 
-        tiles[curY][curX].removeZeroLabelFromPanel(tiles[curY][curX].getPanel());
+        tiles[curY][curX].removeLabelFromPanel(tiles[curY][curX].getPanel(), 0);
         tiles[curY][curX].setPiece(null);
 
         tiles[curY][curX].setPiece(selectedPiece);
         tiles[curY][curX].addLabelToPanel(new JLabel(selectedPiece.getImgIcon()));
 
-        tiles[oldY][oldX].removeZeroLabelFromPanel(tiles[oldY][oldX].getPanel());
+        tiles[oldY][oldX].removeLabelFromPanel(tiles[oldY][oldX].getPanel(), 0);
         tiles[oldY][oldX].setPiece(null);
         tiles[oldY][oldX].setOccupied(false);
 
